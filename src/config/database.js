@@ -69,6 +69,38 @@ export const initializeDatabase = async () => {
         message TEXT,
         created_at TIMESTAMP DEFAULT NOW()
       );
+
+      CREATE TABLE IF NOT EXISTS polls (
+        id VARCHAR(36) PRIMARY KEY,
+        admin_token VARCHAR(32) UNIQUE NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        duration VARCHAR(255),
+        expected INTEGER DEFAULT 0,
+        open_access BOOLEAN DEFAULT true,
+        date1 VARCHAR(255) NOT NULL,
+        date2 VARCHAR(255) NOT NULL,
+        date3 VARCHAR(255) NOT NULL,
+        timer_end TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS invites (
+        id SERIAL PRIMARY KEY,
+        poll_id VARCHAR(36) NOT NULL REFERENCES polls(id) ON DELETE CASCADE,
+        email VARCHAR(255) NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS votes (
+        id SERIAL PRIMARY KEY,
+        poll_id VARCHAR(36) NOT NULL REFERENCES polls(id) ON DELETE CASCADE,
+        voter_name VARCHAR(255) NOT NULL,
+        choice VARCHAR(50) NOT NULL,
+        alt_date VARCHAR(255),
+        voter_token VARCHAR(255),
+        submitted_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(poll_id, voter_token)
+      );
     `);
 
     client.release();

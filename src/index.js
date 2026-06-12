@@ -12,6 +12,8 @@ import adminRoutes from './routes/admin/index.js';
 import eventRoutes from './routes/events/index.js';
 import matchingRoutes from './routes/matching/index.js';
 import imageRoutes from './routes/images/index.js';
+import pollRoutes from './routes/polls/index.js';
+import voteRoutes from './routes/vote/index.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -181,6 +183,14 @@ app.get('/', (req, res) => {
               <div class="endpoint-desc">Dynamic countdown and poster image generation</div>
             </div>
             <div class="endpoint-card">
+              <div class="endpoint-name">GET /api/polls</div>
+              <div class="endpoint-desc">Doodle-style polls for event scheduling</div>
+            </div>
+            <div class="endpoint-card">
+              <div class="endpoint-name">POST /api/vote/:pollId</div>
+              <div class="endpoint-desc">Submit votes and view poll results</div>
+            </div>
+            <div class="endpoint-card">
               <div class="endpoint-name">WS /socket.io</div>
               <div class="endpoint-desc">Real-time WebSocket chat for users</div>
             </div>
@@ -211,6 +221,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api/polls', pollRoutes);
+app.use('/api/vote', voteRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
