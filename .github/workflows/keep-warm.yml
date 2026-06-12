@@ -9,14 +9,14 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Random ping between 8-12 minutes
+      - name: Random ping between 1-13 minutes
         run: |
           # Generate random number between 0-100
           RANDOM_NUM=$((RANDOM % 101))
 
-          # Probability calculation: ~10% chance per minute = 8-12 min average
-          # If RANDOM_NUM < 10, we ping (10% chance)
-          if [ $RANDOM_NUM -lt 10 ]; then
+          # Probability calculation: ~8% chance per minute = 1-13 min range
+          # If RANDOM_NUM < 8, we ping (8% chance)
+          if [ $RANDOM_NUM -lt 8 ]; then
             echo "Pinging health endpoint (random interval)"
             curl -s https://duck-playground.onrender.com/health
             echo ""
