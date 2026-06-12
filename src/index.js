@@ -93,7 +93,7 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 3001;
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '0.0.0.0';
 
 httpServer.listen(PORT, HOST, () => {
   console.log(`Duck Playground server running at http://${HOST}:${PORT}`);
