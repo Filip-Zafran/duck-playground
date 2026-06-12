@@ -32,6 +32,22 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000']
 }));
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    service: 'Duck Playground',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      admin: '/api/admin',
+      events: '/api/events',
+      matching: '/api/matching',
+      images: '/api/images',
+      health: '/health'
+    }
+  });
+});
+
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/events', eventRoutes);
