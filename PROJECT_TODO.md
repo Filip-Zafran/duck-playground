@@ -33,19 +33,27 @@
   - [ ] Implement vote tallying/results
 
 ### Frontend Integration (psd-website)
-- [ ] **Poll Component** (Svelte)
-  - [ ] Create `src/components/PollWidget.svelte`
-  - [ ] Display poll options
-  - [ ] Handle vote submission
-  - [ ] Show real-time results
 
-- [ ] **Pages**
-  - [ ] Update `src/pages/poll.astro` to use Duck-Playground API
-  - [ ] Update `src/pages/poll-vote.astro` to use Duck-Playground API
+- [ ] **Environment Setup**
+  - [ ] Add `DUCK_PLAYGROUND_API=https://duck-playground.onrender.com` to `.env`
+  - [ ] For local dev: `DUCK_PLAYGROUND_API=http://localhost:3001`
 
-- [ ] **API Integration**
-  - [ ] Set DUCK_PLAYGROUND_API in `.env`
-  - [ ] Fetch polls from Duck-Playground instead of local API
+- [ ] **Update API Routes**
+  - [ ] Replace `src/pages/api/polls/index.ts` to forward to Duck-Playground
+    - [ ] GET /api/polls → fetch from `${API_URL}/api/polls`
+    - [ ] POST /api/polls → forward to `${API_URL}/api/polls`
+  - [ ] Replace `src/pages/api/vote/[pollId].ts` to forward to Duck-Playground
+    - [ ] GET /api/vote/:pollId → fetch from `${API_URL}/api/vote/:pollId`
+    - [ ] POST /api/vote/:pollId → forward to `${API_URL}/api/vote/:pollId`
+  - [ ] Delete `src/pages/api/polls/[id].ts` (Duck-Playground handles deletion)
+
+- [ ] **Clean Up Local Database**
+  - [ ] Delete `src/lib/db.ts` (no longer needed)
+  - [ ] Delete local SQLite files: `polls.db`, `polls.db-shm`, `polls.db-wal`
+
+- [ ] **Pages** (should already work once routes are updated)
+  - [ ] Test `src/pages/poll.astro` connects to Duck-Playground
+  - [ ] Test `src/pages/poll-vote.astro` connects to Duck-Playground
 
 ### Testing
 - [ ] Test poll creation via API
