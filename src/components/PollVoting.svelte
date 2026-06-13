@@ -402,6 +402,8 @@
   .checkbox-label {
     flex: 1;
     font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
   }
 
   .error-message {
