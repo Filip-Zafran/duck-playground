@@ -151,9 +151,17 @@
     }
   }
 
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(window.location.origin + text);
-    alert('Copied to clipboard!');
+  let copiedPollId = null;
+
+  function copyToClipboard(text, pollId) {
+    const fullUrl = window.location.origin + text;
+    navigator.clipboard.writeText(fullUrl);
+
+    // Show visual feedback
+    copiedPollId = pollId;
+    setTimeout(() => {
+      copiedPollId = null;
+    }, 2000);
   }
 
   async function viewResults(pollId, pollTitle) {
@@ -421,10 +429,11 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
 
             <div class="poll-actions">
               <button
-                class="btn-secondary"
-                on:click={() => copyToClipboard(`/poll-vote?token=${poll.id}`)}
+                class="btn-secondary {copiedPollId === poll.id ? 'copied' : ''}"
+                on:click={() => copyToClipboard(`/poll-vote?token=${poll.id}`, poll.id)}
+                title="Copy voting link with live countdown timer"
               >
-                Copy Vote Link
+                {copiedPollId === poll.id ? '✓ Copied!' : 'Copy Vote Link'}
               </button>
               <a href={`/poll-results?token=${poll.id}`} class="btn-secondary" style="text-decoration: none; display: inline-block;">
                 View Results
@@ -516,6 +525,12 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
 
   .btn-secondary:hover:not(:disabled) {
     background: #e0e0e0;
+  }
+
+  .btn-secondary.copied {
+    background: #4caf50;
+    color: white;
+    border-color: #45a049;
   }
 
   .btn-delete {
