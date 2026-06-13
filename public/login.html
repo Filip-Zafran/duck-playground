@@ -90,8 +90,17 @@
       font-size: 0.9rem;
     }
 
-    input[type="password"] {
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
       padding: 0.875rem 1rem;
+      padding-right: 2.75rem;
       border: 1px solid rgba(47, 47, 47, 0.15);
       border-radius: 0.75rem;
       font-size: 1rem;
@@ -99,10 +108,34 @@
       transition: all 0.18s ease;
     }
 
-    input[type="password"]:focus {
+    input[type="password"]:focus,
+    input[type="text"]:focus {
       outline: none;
       border-color: #ff5b92;
       box-shadow: 0 0 0 3px rgba(255, 91, 146, 0.1);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #2f2f2f;
+      padding: 0.5rem;
+      transition: opacity 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .password-toggle:hover {
+      opacity: 0.7;
+    }
+
+    .password-toggle:active {
+      opacity: 1;
     }
 
     button {
@@ -172,14 +205,19 @@
     <form class="login-form" id="loginForm">
       <div class="form-group">
         <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Enter password"
-          required
-          autofocus
-        >
+        <div class="password-input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+            autofocus
+          >
+          <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+            👁️
+          </button>
+        </div>
       </div>
       <button type="submit">Enter</button>
     </form>
@@ -188,15 +226,25 @@
   <script>
     const form = document.getElementById('loginForm');
     const errorMsg = document.getElementById('errorMsg');
+    const passwordInput = document.getElementById('password');
+    const toggleButton = document.getElementById('togglePassword');
     const urlParams = new URLSearchParams(window.location.search);
 
     if (urlParams.has('error')) {
       errorMsg.classList.add('show');
     }
 
+    // Toggle password visibility
+    toggleButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      toggleButton.textContent = isPassword ? '🙈' : '👁️';
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const password = document.getElementById('password').value;
+      const password = passwordInput.value;
 
       fetch('/api/auth/login', {
         method: 'POST',
@@ -207,7 +255,7 @@
           window.location.href = '/';
         } else {
           errorMsg.classList.add('show');
-          document.getElementById('password').value = '';
+          passwordInput.value = '';
         }
       }).catch(() => {
         errorMsg.classList.add('show');
