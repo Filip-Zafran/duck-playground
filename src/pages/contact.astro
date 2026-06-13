@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactPage from '../components/ContactPage.svelte';
+---
+
+<Layout title="Contact - Poly Speed Dating (PSD)">
+  <ContactPage client:load />
+</Layout>
+
+<style>
+  :global(.container) {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+</style>
