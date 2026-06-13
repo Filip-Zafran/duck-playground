@@ -16,6 +16,28 @@
   let altDate = '';
   let submitting = false;
   let voteSubmitted = false;
+  let timeRemaining = '';
+  let timerInterval;
+
+  function updateTimer() {
+    if (!poll || !poll.timer_end) return;
+
+    const endTime = new Date(poll.timer_end).getTime();
+    const now = new Date().getTime();
+    const diff = endTime - now;
+
+    if (diff <= 0) {
+      timeRemaining = 'Voting has ended';
+      if (timerInterval) clearInterval(timerInterval);
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    timeRemaining = `${hours}h ${minutes}m ${seconds}s`;
+  }
 
   onMount(async () => {
     // If pollId not provided as prop, try to get from URL
@@ -39,11 +61,22 @@
 
       poll = await response.json();
       loading = false;
+
+      // Start timer if poll has a deadline
+      if (poll.timer_end) {
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 1000);
+      }
     } catch (e) {
       error = 'Failed to load poll';
       console.error(e);
       loading = false;
     }
+
+    // Cleanup interval on unmount
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
   });
 
   async function submitVote() {
@@ -137,7 +170,7 @@
 
       {#if poll.timer_end}
         <div class="timer-info">
-          <p>⏱️ Deadline to vote: {new Date(poll.timer_end).toLocaleString()}</p>
+          <p>⏱️ Time remaining: <strong>{timeRemaining}</strong></p>
         </div>
       {/if}
 
@@ -325,11 +358,33 @@
 
   .timer-info {
     background: #fff3cd;
-    border: 1px solid #ffc107;
+    border: 2px solid #ffc107;
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 2rem;
     color: #856404;
+    animation: pulse 2s infinite;
+  }
+
+  .timer-info p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .timer-info strong {
+    color: #d39e00;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
   }
 
   .disclaimer-box {
