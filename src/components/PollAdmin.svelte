@@ -27,7 +27,13 @@
 
   onMount(async () => {
     adminToken = new URLSearchParams(window.location.search).get('admin') || '';
+    console.log('Admin token from URL:', adminToken);
     await loadPolls();
+    console.log('Polls loaded:', polls);
+    console.log('Comparing adminToken with poll admin_tokens:');
+    polls.forEach(poll => {
+      console.log(`Poll "${poll.title}": ${adminToken} === ${poll.admin_token}? ${adminToken === poll.admin_token}`);
+    });
   });
 
   async function loadPolls() {
@@ -144,6 +150,43 @@
   function copyToClipboard(text) {
     navigator.clipboard.writeText(window.location.origin + text);
     alert('Copied to clipboard!');
+  }
+
+  async function viewResults(pollId, pollTitle) {
+    console.log('viewResults called for poll:', pollId, pollTitle);
+    try {
+      console.log('Fetching from: /api/polls/' + pollId + '/results');
+      const response = await fetch(`/api/polls/${pollId}/results`);
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Error response:', text);
+        alert('Failed to load results. Status: ' + response.status);
+        return;
+      }
+
+      const results = await response.json();
+      console.log('Results:', results);
+
+      const resultsText = `
+Poll: ${pollTitle}
+
+Results:
+- Date 1: ${results.counts.date1} votes
+- Date 2: ${results.counts.date2} votes
+- Date 3: ${results.counts.date3} votes
+- No preference: ${results.counts.none} votes
+
+Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date3 + results.counts.none}
+      `.trim();
+      console.log('Showing alert with results');
+      alert(resultsText);
+    } catch (e) {
+      console.error('Exception in viewResults:', e);
+      alert('Error loading results: ' + (e instanceof Error ? e.message : String(e)));
+    }
   }
 
   async function deletePoll(pollId, pollTitle) {
@@ -379,16 +422,19 @@
               >
                 Copy Vote Link
               </button>
+              <button
+                class="btn-secondary"
+                on:click={() => alert('Poll ID: ' + poll.id)}
+              >
+                View Results
+              </button>
               {#if adminToken === poll.admin_token}
-                <button class="btn-secondary">
-                  View Results
-                </button>
                 <button
                   class="btn-delete"
                   on:click={() => deletePoll(poll.id, poll.title)}
                   title="Delete poll"
                 >
-                  🗑️
+                  ✕ Delete
                 </button>
               {/if}
             </div>
@@ -472,16 +518,21 @@
   }
 
   .btn-delete {
-    background: #ffebee;
-    color: #c62828;
-    border: 1px solid #f0a9a9;
-    padding: 0.4rem 0.6rem;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-    line-height: 1;
+    background: #d32f2f !important;
+    color: white !important;
+    border: 2px solid #b71c1c !important;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 6px !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    min-width: auto !important;
+    height: auto !important;
   }
 
   .btn-delete:hover:not(:disabled) {

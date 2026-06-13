@@ -120,7 +120,25 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/polls/:id - Delete poll (admin)
+// GET /api/polls/:id/results - Get poll results
+router.get('/:id/results', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const counts = await getVoteCounts(id);
+    const previews = await getVotePreviews(id);
+
+    res.json({
+      counts,
+      previews
+    });
+  } catch (error) {
+    console.error('Error getting poll results:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /api/polls/:id - Delete poll (admin)
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
