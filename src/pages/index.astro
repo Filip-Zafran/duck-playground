@@ -12,6 +12,16 @@ import Layout from '../layouts/Layout.astro';
     </section>
 
     <div class="hub-grid">
+      <!-- Admin Group -->
+      <div class="hub-card">
+        <div class="card-label">Admin</div>
+        <h2>Administration</h2>
+        <div class="link-grid">
+          <a href="/login" class="link-btn">Login</a>
+          <a href="/poll" class="link-btn">Poll Admin</a>
+        </div>
+      </div>
+
       <!-- App Group -->
       <div class="hub-card">
         <div class="card-label">App</div>
@@ -30,8 +40,8 @@ import Layout from '../layouts/Layout.astro';
         <div class="card-label">Feature Poll</div>
         <h2>Polling System</h2>
         <div class="link-grid">
-          <a href="/poll" class="link-btn">Poll Admin</a>
           <a href="/poll-vote" class="link-btn">Poll Vote</a>
+          <a href="/poll-results" class="link-btn">Poll Results</a>
         </div>
       </div>
 

@@ -27,7 +27,7 @@ router.post('/login', (req, res) => {
     console.log('✅ Token created:', token.substring(0, 20) + '...');
     res.cookie('duck_session', token, COOKIE_OPTS);
     console.log('🍪 Cookie set with options:', COOKIE_OPTS);
-    return res.redirect('/');
+    return res.redirect('/admin');
   }
 
   console.log('❌ Password mismatch! Expected "' + SITE_PASSWORD + '", got "' + password + '"');

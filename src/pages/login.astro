@@ -1,0 +1,189 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Login - Duck Playground">
+  <main class="login-page">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <img src="/images/DDA-logo.png" alt="Duck Dating Apps Logo" class="login-logo" />
+          <h1>Duck Playground</h1>
+          <p class="subtitle">Admin Access</p>
+        </div>
+
+        <form method="POST" action="/api/auth/login" class="login-form">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Enter admin password"
+              required
+              autofocus
+            />
+          </div>
+
+          <button type="submit" class="btn-login">Login</button>
+        </form>
+
+        {Astro.url.searchParams.get('error') ? (
+          <div class="error-message">
+            ❌ Invalid password. Please try again.
+          </div>
+        ) : null}
+
+        <div class="login-footer">
+          <a href="/">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  :global(body) {
+    background: linear-gradient(135deg, #f4efe8 0%, #ffe8f5 100%);
+    min-height: 100vh;
+  }
+
+  .login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .login-card {
+    background: #ffffff;
+    border-radius: 2rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(47, 47, 47, 0.08);
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .login-logo {
+    max-width: 80px;
+    height: auto;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #2f2f2f;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: rgba(47, 47, 47, 0.6);
+    margin: 0;
+  }
+
+  .login-form {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    font-weight: 700;
+    color: #2f2f2f;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  input[type="password"] {
+    width: 100%;
+    padding: 0.95rem 1.15rem;
+    border: 2px solid rgba(47, 47, 47, 0.12);
+    border-radius: 1rem;
+    font-size: 1rem;
+    transition: all 0.18s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  input[type="password"]:focus {
+    outline: none;
+    border-color: #ff5b92;
+    box-shadow: 0 0 0 3px rgba(255, 91, 146, 0.1);
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 1rem 1.35rem;
+    background: linear-gradient(135deg, #ff5b92 0%, #ff3d7f 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 1rem;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 8px 20px rgba(255, 91, 146, 0.25);
+  }
+
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(255, 91, 146, 0.35);
+  }
+
+  .btn-login:active {
+    transform: translateY(0);
+  }
+
+  .error-message {
+    background: #ffebee;
+    border: 1px solid #f0a9a9;
+    color: #8d1f1f;
+    padding: 0.95rem 1.15rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .login-footer {
+    text-align: center;
+  }
+
+  .login-footer a {
+    color: #ff5b92;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.18s ease;
+  }
+
+  .login-footer a:hover {
+    color: #ff3d7f;
+  }
+
+  @media (max-width: 480px) {
+    .login-card {
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
