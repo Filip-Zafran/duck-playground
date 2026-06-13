@@ -11,20 +11,18 @@ export const siteAuth = (req, res, next) => {
   if (PUBLIC_PREFIXES.some(p => path.startsWith(p))) return next();
   if (PUBLIC_EXTENSIONS.some(e => path.endsWith(e))) return next();
 
-  const cookies = Object.fromEntries(
-    (req.headers.cookie || '')
-      .split(';')
-      .map(c => {
-        const [key, value] = c.trim().split('=');
-        return [key, value];
-      })
-      .filter(([key]) => key)
-  );
-
   try {
-    jwt.verify(cookies.duck_session, process.env.JWT_SECRET || 'duck-site-secret');
+    const token = req.cookies.duck_session;
+    if (!token) {
+      console.error('❌ No duck_session cookie found for path:', path);
+      return res.redirect('/login');
+    }
+    jwt.verify(token, process.env.JWT_SECRET || 'duck-site-secret');
     next();
-  } catch {
+  } catch (err) {
+    console.error('❌ JWT verification failed for path:', path);
+    console.error('   Error:', err.message);
+    console.error('   JWT_SECRET env set:', !!process.env.JWT_SECRET);
     res.redirect('/login');
   }
 };

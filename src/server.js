@@ -1,11 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
-import { Server as SocketServer } from 'socket.io';
 import dotenv from 'dotenv';
 
-// Load environment variables
+// Load environment variables FIRST (before any other imports)
 dotenv.config();
+
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { createServer } from 'http';
+import { Server as SocketServer } from 'socket.io';
 
 // Import routes
 import adminRoutes from './routes/admin/index.js';
@@ -35,6 +37,7 @@ const io = new SocketServer(httpServer, {
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
   origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000']
 }));
