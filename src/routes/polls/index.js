@@ -111,8 +111,8 @@ router.post('/', async (req, res) => {
     res.status(201).json({
       id: pollId,
       admin_token: adminToken,
-      vote_url: `/poll-vote.html?token=${pollId}`,
-      admin_url: `/poll.html?admin=${adminToken}`
+      vote_url: `/poll-vote?token=${pollId}`,
+      admin_url: `/poll?admin=${adminToken}`
     });
   } catch (error) {
     console.error('Error creating poll:', error);
