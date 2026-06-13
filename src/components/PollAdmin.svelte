@@ -145,6 +145,27 @@
     navigator.clipboard.writeText(window.location.origin + text);
     alert('Copied to clipboard!');
   }
+
+  async function deletePoll(pollId, pollTitle) {
+    const confirmed = confirm(`Are you sure you want to delete "${pollTitle}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/polls/${pollId}?admin_token=${adminToken}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        alert('Failed to delete poll');
+        return;
+      }
+
+      alert('Poll deleted successfully');
+      await loadPolls();
+    } catch (e) {
+      alert('Error deleting poll: ' + (e instanceof Error ? e.message : String(e)));
+    }
+  }
 </script>
 
 <div class="poll-admin-container">
@@ -362,6 +383,13 @@
                 <button class="btn-secondary">
                   View Results
                 </button>
+                <button
+                  class="btn-delete"
+                  on:click={() => deletePoll(poll.id, poll.title)}
+                  title="Delete poll"
+                >
+                  ✕
+                </button>
               {/if}
             </div>
 
@@ -443,8 +471,27 @@
     background: #e0e0e0;
   }
 
+  .btn-delete {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #f0a9a9;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .btn-delete:hover:not(:disabled) {
+    background: #f8a5a5;
+    color: #850000;
+  }
+
   .btn-primary:disabled,
-  .btn-secondary:disabled {
+  .btn-secondary:disabled,
+  .btn-delete:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
