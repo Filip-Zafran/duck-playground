@@ -6,6 +6,28 @@
   let results = null;
   let loading = true;
   let error = '';
+  let timeRemaining = '';
+  let timerInterval;
+
+  function updateTimer() {
+    if (!poll || !poll.timer_end) return;
+
+    const endTime = new Date(poll.timer_end).getTime();
+    const now = new Date().getTime();
+    const diff = endTime - now;
+
+    if (diff <= 0) {
+      timeRemaining = 'Voting has ended';
+      if (timerInterval) clearInterval(timerInterval);
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    timeRemaining = `${hours}h ${minutes}m ${seconds}s`;
+  }
 
   onMount(async () => {
     pollId = new URLSearchParams(window.location.search).get('token') || '';
@@ -37,11 +59,22 @@
       }
 
       results = await resultsResponse.json();
+
+      // Start timer if poll has a deadline
+      if (poll && poll.timer_end) {
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 1000);
+      }
     } catch (e) {
       error = 'Error loading poll: ' + (e instanceof Error ? e.message : String(e));
     } finally {
       loading = false;
     }
+
+    // Cleanup interval on unmount
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
   });
 
   function getDateLabel(dateStr, timeStr = '') {
@@ -83,6 +116,12 @@
     <div class="error-message">{error}</div>
   {:else if poll && results}
     <div class="results-card">
+      {#if poll.timer_end}
+        <div class="timer-info">
+          <p>⏱️ Time remaining: <strong>{timeRemaining}</strong></p>
+        </div>
+      {/if}
+
       <h1>{poll.title}</h1>
       {#if poll.description}
         <p class="description">{poll.description}</p>
@@ -293,5 +332,36 @@
 
   .back-link a:hover {
     text-decoration: underline;
+  }
+
+  .timer-info {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: #856404;
+    animation: pulse 2s infinite;
+  }
+
+  .timer-info p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .timer-info strong {
+    color: #d39e00;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
   }
 </style>
