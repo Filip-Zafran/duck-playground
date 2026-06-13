@@ -388,7 +388,7 @@
                   on:click={() => deletePoll(poll.id, poll.title)}
                   title="Delete poll"
                 >
-                  ✕
+                  🗑️
                 </button>
               {/if}
             </div>
