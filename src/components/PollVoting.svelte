@@ -13,6 +13,11 @@
   let voteSubmitted = false;
 
   onMount(async () => {
+    // If pollId not provided as prop, try to get from URL
+    if (!pollId) {
+      pollId = new URLSearchParams(window.location.search).get('token') || '';
+    }
+
     if (!pollId) {
       error = 'No poll ID provided';
       loading = false;
