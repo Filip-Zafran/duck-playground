@@ -101,29 +101,62 @@ import Layout from '../layouts/Layout.astro';
     <!-- Navigation Links -->
     <section class="navigation-section">
       <h2>Internal Pages</h2>
-      <div class="nav-grid">
-        <a href="/apply" class="nav-link nav-link--active">Apply</a>
-        <a href="/calendar" class="nav-link nav-link--active">Calendar</a>
-        <a href="/contact" class="nav-link nav-link--active">Contact</a>
-        <a href="/dashboard" class="nav-link nav-link--active">Dashboard</a>
-        <a href="/dates" class="nav-link nav-link--active">Dates</a>
-        <a href="/faq" class="nav-link nav-link--active">FAQ</a>
-        <a href="/identity" class="nav-link nav-link--active">Identity</a>
-        <a href="/imprint" class="nav-link nav-link--active">Imprint</a>
-        <a href="/interests" class="nav-link nav-link--active">Interests</a>
-        <a href="/matches" class="nav-link nav-link--active">Matches</a>
-        <a href="/merch" class="nav-link nav-link--active">Merch</a>
-        <a href="/order" class="nav-link nav-link--active">Order</a>
-        <a href="/organiser" class="nav-link nav-link--active">Organiser</a>
-        <a href="/poll" class="nav-link nav-link--active">Poll</a>
-        <a href="/poll-vote" class="nav-link nav-link--active">Poll Vote</a>
-        <a href="/polyfest" class="nav-link nav-link--active">Polyfest</a>
-        <a href="/privacy" class="nav-link nav-link--active">Privacy</a>
-        <a href="/profile" class="nav-link nav-link--active">Profile</a>
-        <a href="/rounds" class="nav-link nav-link--active">Rounds</a>
-        <a href="/connectors" class="nav-link nav-link--active">Connectors</a>
-        <a href="/test-connectors" class="nav-link nav-link--active">Test Connectors</a>
-        <a href="/test-simple" class="nav-link nav-link--active">Test Simple</a>
+      <div class="nav-groups">
+        <!-- Web Group -->
+        <div class="nav-group">
+          <h3 class="nav-group__title">Web</h3>
+          <div class="nav-grid">
+            <a href="/apply" class="nav-link nav-link--active">Apply</a>
+            <a href="/calendar" class="nav-link nav-link--active">Calendar</a>
+            <a href="/contact" class="nav-link nav-link--active">Contact</a>
+            <a href="/faq" class="nav-link nav-link--active">FAQ</a>
+            <a href="/identity" class="nav-link nav-link--active">Identity</a>
+            <a href="/merch" class="nav-link nav-link--active">Merch</a>
+            <a href="/order" class="nav-link nav-link--active">Order</a>
+            <a href="/polyfest" class="nav-link nav-link--active">Polyfest</a>
+          </div>
+        </div>
+
+        <!-- Imprint & Privacy Group -->
+        <div class="nav-group">
+          <h3 class="nav-group__title">Imprint & Privacy</h3>
+          <div class="nav-grid">
+            <a href="/imprint" class="nav-link nav-link--active">Imprint</a>
+            <a href="/privacy" class="nav-link nav-link--active">Privacy</a>
+          </div>
+        </div>
+
+        <!-- App Group -->
+        <div class="nav-group">
+          <h3 class="nav-group__title">App</h3>
+          <div class="nav-grid">
+            <a href="/interests" class="nav-link nav-link--active">Interests</a>
+            <a href="/matches" class="nav-link nav-link--active">Matches</a>
+            <a href="/rounds" class="nav-link nav-link--active">Rounds</a>
+            <a href="/profile" class="nav-link nav-link--active">Profile</a>
+            <a href="/organiser" class="nav-link nav-link--active">Organiser</a>
+          </div>
+        </div>
+
+        <!-- Feature Poll Group -->
+        <div class="nav-group">
+          <h3 class="nav-group__title">Feature Poll</h3>
+          <div class="nav-grid">
+            <a href="/poll" class="nav-link nav-link--active">Poll</a>
+            <a href="/poll-vote" class="nav-link nav-link--active">Poll Vote</a>
+          </div>
+        </div>
+
+        <!-- Future Features Group -->
+        <div class="nav-group">
+          <h3 class="nav-group__title">Future Features</h3>
+          <div class="nav-grid">
+            <a href="/connectors" class="nav-link nav-link--active">Connectors</a>
+            <a href="/test-connectors" class="nav-link nav-link--active">Test Connectors</a>
+            <a href="/dashboard" class="nav-link nav-link--active">Dashboard</a>
+            <a href="/dates" class="nav-link nav-link--active">Dates</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -234,24 +267,45 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .navigation-section {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 3rem auto 0;
     padding: 2rem;
-    background: #f8f9fa;
-    border-radius: 12px;
   }
 
   .navigation-section h2 {
     text-align: center;
     margin-top: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     color: #333;
     font-size: 1.5em;
   }
 
+  .nav-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .nav-group {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .nav-group__title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.75rem;
+  }
+
   .nav-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     gap: 0.75rem;
   }
 
