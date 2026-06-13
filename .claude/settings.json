@@ -10,7 +10,17 @@
       "Bash(git commit -m ' *)",
       "Bash(pnpm build *)",
       "WebFetch(domain:www.duckdatingapps.com)",
-      "WebFetch(domain:duck-playground.onrender.com)"
+      "WebFetch(domain:duck-playground.onrender.com)",
+      "Bash(echo \"Dev server started \\(PID: $!\\)\")",
+      "Bash(curl -s http://localhost:4321/)",
+      "Bash(curl -s http://localhost:4323/)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/apply)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/calendar)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/contact)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/interests)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/poll)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/dashboard)",
+      "Bash(cp -r dist/* public/)"
     ]
   }
 }

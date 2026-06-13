@@ -12,7 +12,7 @@
 <header>
   <div class="header-content">
     <a href="/" class="logo">
-      <img src="/images/PSD-logo.png" alt="PSD Logo" class="logo-img" />
+      <img src="/images/DDA-logo.png" alt="Duck Dating Apps" class="logo-img" />
     </a>
     <nav class="nav-desktop">
       {#each navItems as item}

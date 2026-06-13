@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Duck Playground - Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4efe8;
+      background-image:
+        linear-gradient(rgba(47, 47, 47, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(47, 47, 47, 0.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      background-attachment: fixed;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #2f2f2f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .login-container {
+      background: #ffffff;
+      border-radius: 2rem;
+      padding: 2rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      max-width: 380px;
+      width: 100%;
+      border: 1px solid rgba(47, 47, 47, 0.08);
+    }
+
+    .login-hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      width: 100px;
+      height: auto;
+      margin-bottom: 1.5rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .kicker {
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #ff5b92;
+      margin-bottom: 0.75rem;
+    }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.95rem;
+      color: rgba(47, 47, 47, 0.75);
+      line-height: 1.6;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    input[type="password"] {
+      padding: 0.875rem 1rem;
+      border: 1px solid rgba(47, 47, 47, 0.15);
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.18s ease;
+    }
+
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #ff5b92;
+      box-shadow: 0 0 0 3px rgba(255, 91, 146, 0.1);
+    }
+
+    button {
+      padding: 0.95rem 1.35rem;
+      background: #2f2f2f;
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      box-shadow: 0 4px 12px rgba(47, 47, 47, 0.12);
+    }
+
+    button:hover {
+      background: #1a1a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(47, 47, 47, 0.18);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      display: none;
+      padding: 0.875rem 1rem;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 0.75rem;
+      color: #991b1b;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-0.5rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-hero">
+      <img src="/images/DDA-logo.png" alt="Duck Dating Apps Logo" class="logo">
+      <div class="kicker">Internal Dev Tools</div>
+      <h1 class="login-title">Duck Playground</h1>
+      <p class="login-subtitle">Enter the password to access the development sandbox</p>
+    </div>
+
+    <div class="error-message" id="errorMsg">
+      Incorrect password. Try again.
+    </div>
+
+    <form class="login-form" id="loginForm">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter password"
+          required
+          autofocus
+        >
+      </div>
+      <button type="submit">Enter</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('error')) {
+      errorMsg.classList.add('show');
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const password = document.getElementById('password').value;
+
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      }).then(res => {
+        if (res.ok || res.status === 302) {
+          window.location.href = '/';
+        } else {
+          errorMsg.classList.add('show');
+          document.getElementById('password').value = '';
+        }
+      }).catch(() => {
+        errorMsg.classList.add('show');
+      });
+    });
+  </script>
+</body>
+</html>

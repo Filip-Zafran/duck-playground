@@ -1,0 +1,114 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Admin - Duck Playground">
+  <main class="admin-page">
+    <div class="admin-container">
+      <h1>Admin Panel</h1>
+      <p class="subtitle">You're authenticated to Duck Playground</p>
+
+      <div class="admin-info">
+        <div class="info-box">
+          <h2>Session Active</h2>
+          <p>Your authentication session is valid for 7 days.</p>
+        </div>
+      </div>
+
+      <div class="admin-actions">
+        <form method="POST" action="/api/auth/logout" class="logout-form">
+          <button type="submit" class="btn-logout">Logout</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .admin-page {
+    padding: 3rem 1rem;
+  }
+
+  .admin-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 2rem;
+    padding: 2rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(47, 47, 47, 0.08);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #2f2f2f;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: rgba(47, 47, 47, 0.75);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .admin-info {
+    margin-bottom: 2rem;
+  }
+
+  .info-box {
+    background: #f4efe8;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(47, 47, 47, 0.08);
+  }
+
+  .info-box h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2f2f2f;
+  }
+
+  .info-box p {
+    font-size: 0.95rem;
+    color: rgba(47, 47, 47, 0.75);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .admin-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .logout-form {
+    flex: 1;
+  }
+
+  .btn-logout {
+    width: 100%;
+    padding: 0.95rem 1.35rem;
+    background: #ff5b92;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 12px rgba(255, 91, 146, 0.2);
+  }
+
+  .btn-logout:hover {
+    background: #e8477d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 91, 146, 0.3);
+  }
+
+  .btn-logout:active {
+    transform: translateY(0);
+  }
+</style>

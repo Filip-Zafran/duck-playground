@@ -9,6 +9,7 @@ dotenv.config();
 
 // Import routes
 import adminRoutes from './routes/admin/index.js';
+import authRoutes from './routes/auth/index.js';
 import eventRoutes from './routes/events/index.js';
 import matchingRoutes from './routes/matching/index.js';
 import imageRoutes from './routes/images/index.js';
@@ -18,6 +19,7 @@ import voteRoutes from './routes/vote/index.js';
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 import { authenticate } from './middleware/auth.js';
+import { siteAuth } from './middleware/siteAuth.js';
 
 // Import database initialization
 import { initializeDatabase } from './config/database.js';
@@ -37,6 +39,9 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000']
 }));
 
+// Site-wide authentication middleware (before static files)
+app.use(siteAuth);
+
 // Serve static files (Astro build output)
 app.use(express.static('public'));
 app.use(express.static('dist'));
@@ -48,6 +53,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/images', imageRoutes);
