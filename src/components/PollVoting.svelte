@@ -137,7 +137,7 @@
 
       {#if poll.timer_end}
         <div class="timer-info">
-          <p>⏱️ Timer ends: {new Date(poll.timer_end).toLocaleString()}</p>
+          <p>⏱️ Deadline to vote: {new Date(poll.timer_end).toLocaleString()}</p>
         </div>
       {/if}
 
