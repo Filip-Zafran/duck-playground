@@ -75,8 +75,11 @@ router.post('/', async (req, res) => {
       expected,
       open_access,
       date1,
+      time1,
       date2,
+      time2,
       date3,
+      time3,
       timer_minutes = 0,
       invite_emails = []
     } = req.body;
@@ -91,9 +94,9 @@ router.post('/', async (req, res) => {
     }
 
     await pool.query(`
-      INSERT INTO polls (id, admin_token, title, description, duration, expected, open_access, date1, date2, date3, timer_end)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-    `, [pollId, adminToken, title, description || null, duration || null, expected || 0, open_access ? true : false, date1, date2, date3, timerEnd]);
+      INSERT INTO polls (id, admin_token, title, description, duration, expected, open_access, date1, time1, date2, time2, date3, time3, timer_end)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    `, [pollId, adminToken, title, description || null, duration || null, expected || 0, open_access ? true : false, date1, time1 || null, date2, time2 || null, date3, time3 || null, timerEnd]);
 
     // Add invites if not open access
     if (!open_access && invite_emails.length > 0) {

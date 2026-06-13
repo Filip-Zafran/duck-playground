@@ -79,8 +79,11 @@ export const initializeDatabase = async () => {
         expected INTEGER DEFAULT 0,
         open_access BOOLEAN DEFAULT true,
         date1 VARCHAR(255) NOT NULL,
+        time1 VARCHAR(5),
         date2 VARCHAR(255) NOT NULL,
+        time2 VARCHAR(5),
         date3 VARCHAR(255) NOT NULL,
+        time3 VARCHAR(5),
         timer_end TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW()
       );
