@@ -1,11 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
-// Redirect to login page
-return Astro.redirect('/login');
 ---
 
 <Layout title="Duck Playground - Developer Tools Hub">
+  <script>
+    // Redirect to login on client side
+    window.location.href = '/login';
+  </script>
   <main class="dev-hub">
     <section class="hero">
       <img src="/images/DDA-logo.png" alt="Duck Dating Apps Logo" class="hero-logo" />
