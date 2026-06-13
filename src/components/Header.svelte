@@ -3,12 +3,9 @@
 
   const navItems = [
     { label: 'Home', href: '/' },
-    { label: 'Calendar', href: '/calendar' },
-    { label: 'Identity', href: '/identity' },
-    { label: 'Polyfest', href: '/polyfest' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Merch', href: '/merch' },
-    { label: 'Contact', href: '/contact' }
+    { label: 'App', href: '/interests' },
+    { label: 'Poll', href: '/poll' },
+    { label: 'Dashboard', href: '/dashboard' }
   ];
 </script>
 

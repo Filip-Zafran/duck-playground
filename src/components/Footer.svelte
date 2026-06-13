@@ -5,15 +5,15 @@
 <footer>
   <div class="footer-content">
     <div class="footer-section">
-      <h3>PSD</h3>
-      <p>Dating event coordination made simple.</p>
+      <h3>Duck Playground</h3>
+      <p>Development sandbox for the Duck Dating Apps project.</p>
     </div>
     <div class="footer-section">
-      <h3>Links</h3>
+      <h3>Resources</h3>
       <ul>
-        <li><a href="/privacy">Privacy</a></li>
-        <li><a href="/imprint">Imprint</a></li>
-        <li><a href="/contact">Contact</a></li>
+        <li><a href="https://www.duckdatingapps.com/" target="_blank" rel="noopener noreferrer">Duck Dating Apps</a></li>
+        <li><a href="/poll">Feature Poll</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
       </ul>
     </div>
   </div>

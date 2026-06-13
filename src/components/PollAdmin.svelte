@@ -282,7 +282,7 @@
               id="timerMinutes"
               type="number"
               bind:value={formData.timerMinutes}
-              placeholder="e.g., 60"
+              placeholder="e.g. 1440 for 24h"
               disabled={formSubmitting}
             />
           </div>

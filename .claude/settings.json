@@ -7,7 +7,10 @@
       "Bash(npm dev *)",
       "Bash(curl -s http://localhost:3001/api/polls)",
       "Bash(grep -E '\\\\.\\(tsx?|jsx?|html\\)$')",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(pnpm build *)",
+      "WebFetch(domain:www.duckdatingapps.com)",
+      "WebFetch(domain:duck-playground.onrender.com)"
     ]
   }
 }
