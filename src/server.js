@@ -51,6 +51,11 @@ app.get('/', (req, res) => {
   res.sendFile('public/index.html', { root: '.' });
 });
 
+// Login route - no auth required
+app.get('/login', (req, res) => {
+  res.sendFile('public/login.html', { root: '.' });
+});
+
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
