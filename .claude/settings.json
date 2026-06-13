@@ -36,7 +36,9 @@
       "Skill(run:*)",
       "Bash(pkill -f \"npm run dev\")",
       "Bash(psql \"postgresql://duck_user:KkVyixmn60nIzmRCNL4p5ralzCc4N2Nd@dpg-d8mjasernols73cmvdd0-a.frankfurt-postgres.render.com/duck_playground\" -c \"SELECT id, title, admin_token FROM polls ORDER BY created_at DESC LIMIT 5;\")",
-      "Bash(grep -E \"\\\\.\\(astro|svelte\\)$\")"
+      "Bash(grep -E \"\\\\.\\(astro|svelte\\)$\")",
+      "Bash(curl -s http://localhost:3001/poll/)",
+      "Bash(node -e ' *)"
     ]
   }
 }

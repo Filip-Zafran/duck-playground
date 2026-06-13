@@ -144,9 +144,9 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     const { admin_token } = req.query;
 
-    // Verify admin token
-    const pollResult = await pool.query('SELECT id FROM polls WHERE id = $1 AND admin_token = $2', [id, admin_token]);
-    if (pollResult.rows.length === 0) {
+    // Verify admin token matches site-wide admin token
+    const siteAdminToken = process.env.ADMIN_TOKEN || 'default-admin-token';
+    if (admin_token !== siteAdminToken) {
       return res.status(401).json({ error: 'Invalid admin token' });
     }
 

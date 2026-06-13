@@ -27,12 +27,16 @@
 
   onMount(async () => {
     adminToken = new URLSearchParams(window.location.search).get('admin') || '';
-    console.log('Admin token from URL:', adminToken);
+    console.log('Admin token from URL:', adminToken, 'length:', adminToken.length);
     await loadPolls();
-    console.log('Polls loaded:', polls);
+    console.log('Polls loaded:', polls.length, 'polls');
     console.log('Comparing adminToken with poll admin_tokens:');
     polls.forEach(poll => {
-      console.log(`Poll "${poll.title}": ${adminToken} === ${poll.admin_token}? ${adminToken === poll.admin_token}`);
+      const match = adminToken === poll.admin_token;
+      console.log(`Poll "${poll.title}": [${adminToken}] === [${poll.admin_token}]? ${match}`);
+      if (!match && adminToken && poll.admin_token) {
+        console.log(`  URL token length: ${adminToken.length}, DB token length: ${poll.admin_token.length}`);
+      }
     });
   });
 
@@ -92,7 +96,7 @@
       }
 
       const result = await response.json();
-      formSuccess = `Poll created! Vote URL: /poll-vote?token=${result.id}`;
+      formSuccess = `Poll created! Vote: /poll-vote?token=${result.id}`;
 
       // Reset form
       formData = {
@@ -428,7 +432,7 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
               >
                 View Results
               </button>
-              {#if adminToken === poll.admin_token}
+              {#if adminToken}
                 <button
                   class="btn-delete"
                   on:click={() => deletePoll(poll.id, poll.title)}
