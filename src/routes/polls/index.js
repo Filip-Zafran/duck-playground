@@ -42,7 +42,7 @@ async function getVotePreviews(pollId) {
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT id, title, expected, created_at, admin_token
+      SELECT id, title, expected, created_at, admin_token, date1, time1, date2, time2, date3, time3
       FROM polls
       ORDER BY created_at DESC
     `);
