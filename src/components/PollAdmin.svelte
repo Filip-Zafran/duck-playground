@@ -452,11 +452,6 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
         {#each polls as poll}
           <div class="poll-card">
             <h3>{poll.title}</h3>
-            {#if poll.timer_end}
-              <div class="card-timer">
-                ⏱️ {pollTimers[poll.id] || 'Loading...'}
-              </div>
-            {/if}
             <div class="poll-meta">
               <p>📅 {getDateLabel(poll.date1, poll.time1)} | {getDateLabel(poll.date2, poll.time2)} | {getDateLabel(poll.date3, poll.time3)}</p>
               <p>🗳️ {poll.vote_count || 0} votes</p>
@@ -488,7 +483,12 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
             </div>
 
             <div class="poll-dates">
-              <small>Created: {new Date(poll.created_at).toLocaleDateString()}</small>
+              <div class="date-info">
+                <small>Created: {new Date(poll.created_at).toLocaleDateString()}</small>
+                {#if poll.timer_end}
+                  <small class="timer-badge">⏱️ {pollTimers[poll.id] || 'Loading...'}</small>
+                {/if}
+              </div>
             </div>
           </div>
         {/each}
@@ -735,17 +735,6 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
     font-size: 1.3rem;
   }
 
-  .card-timer {
-    background: #fff3cd;
-    border: 1px solid #ffc107;
-    color: #856404;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    font-family: 'Courier New', monospace;
-  }
 
   .poll-meta {
     margin: 0;
@@ -769,7 +758,26 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
     padding-top: 0.75rem;
   }
 
-  .poll-dates small {
+  .date-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .date-info small {
     color: #999;
+    font-size: 0.85rem;
+  }
+
+  .timer-badge {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 </style>
