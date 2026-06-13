@@ -151,7 +151,7 @@
 
         {#if results.counts.none > 0}
           <div class="result-item">
-            <div class="date-label">No Preference</div>
+            <div class="date-label">I can't make it this month</div>
             <div class="vote-bar">
               <div
                 class="vote-fill"

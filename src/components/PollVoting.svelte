@@ -7,7 +7,12 @@
   let loading = true;
   let error = '';
   let voterName = '';
-  let selectedChoice = '';
+  let selectedDates = {
+    date1: false,
+    date2: false,
+    date3: false
+  };
+  let cantMakeIt = false;
   let altDate = '';
   let submitting = false;
   let voteSubmitted = false;
@@ -42,8 +47,9 @@
   });
 
   async function submitVote() {
-    if (!voterName || !selectedChoice) {
-      error = 'Please enter your name and select a date';
+    const hasSelectedDate = selectedDates.date1 || selectedDates.date2 || selectedDates.date3 || cantMakeIt;
+    if (!voterName || !hasSelectedDate) {
+      error = 'Please enter your name and select at least one option';
       return;
     }
 
@@ -51,16 +57,30 @@
     error = '';
 
     try {
-      const response = await fetch(`/api/vote/${pollId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          voter_name: voterName,
-          choice: selectedChoice,
-          alt_date: altDate || null,
-          voter_token: `vote_${Date.now()}_${Math.random()}`
-        })
-      });
+      const votesToSubmit = [];
+
+      if (selectedDates.date1) votesToSubmit.push('date1');
+      if (selectedDates.date2) votesToSubmit.push('date2');
+      if (selectedDates.date3) votesToSubmit.push('date3');
+      if (cantMakeIt) votesToSubmit.push('none');
+
+      // Submit a vote for each selected option
+      const responses = await Promise.all(
+        votesToSubmit.map(choice =>
+          fetch(`/api/vote/${pollId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              voter_name: voterName,
+              choice: choice,
+              alt_date: (choice === 'none' && altDate) ? altDate : null,
+              voter_token: `vote_${Date.now()}_${Math.random()}`
+            })
+          })
+        )
+      );
+
+      const response = responses[0];
 
       if (!response.ok) {
         const data = await response.json();
@@ -141,28 +161,47 @@
           </div>
 
           <div class="form-section">
-            <label>Which date works best for you? *</label>
+            <label>Which dates work for you? *</label>
             <div class="date-options">
-              {#each [
-                { key: 'date1', date: poll.date1 },
-                { key: 'date2', date: poll.date2 },
-                { key: 'date3', date: poll.date3 },
-                { key: 'none', date: 'None of these dates work' }
-              ] as option}
-                <label class="radio-option">
-                  <input
-                    type="radio"
-                    bind:group={selectedChoice}
-                    value={option.key}
-                    disabled={submitting}
-                  />
-                  <span class="radio-label">{getDateLabel(option.date)}</span>
-                </label>
-              {/each}
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  bind:checked={selectedDates.date1}
+                  disabled={submitting}
+                />
+                <span class="checkbox-label">{getDateLabel(poll.date1, poll.time1)}</span>
+              </label>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  bind:checked={selectedDates.date2}
+                  disabled={submitting}
+                />
+                <span class="checkbox-label">{getDateLabel(poll.date2, poll.time2)}</span>
+              </label>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  bind:checked={selectedDates.date3}
+                  disabled={submitting}
+                />
+                <span class="checkbox-label">{getDateLabel(poll.date3, poll.time3)}</span>
+              </label>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  bind:checked={cantMakeIt}
+                  disabled={submitting}
+                />
+                <span class="checkbox-label">I can't make it this month</span>
+              </label>
             </div>
           </div>
 
-          {#if selectedChoice === 'none'}
+          {#if cantMakeIt}
+            <div class="disclaimer-box">
+              <p>No worries, we have backups that we will engage right away</p>
+            </div>
             <div class="form-section">
               <label for="altDate">Suggest an alternative date</label>
               <input
@@ -181,7 +220,7 @@
           <button
             type="submit"
             class="submit-btn"
-            disabled={submitting || !voterName || !selectedChoice}
+            disabled={submitting || !voterName || (!selectedDates.date1 && !selectedDates.date2 && !selectedDates.date3 && !cantMakeIt)}
           >
             {submitting ? 'Submitting...' : 'Submit Vote'}
           </button>
@@ -280,6 +319,21 @@
     color: #856404;
   }
 
+  .disclaimer-box {
+    background: #e8f5e9;
+    border: 2px solid #81c784;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: #2e7d32;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
   .poll-content {
     background: white;
     border-radius: 12px;
@@ -323,7 +377,7 @@
     gap: 0.75rem;
   }
 
-  .radio-option {
+  .checkbox-option {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -335,17 +389,17 @@
     transition: all 0.2s;
   }
 
-  .radio-option:hover {
+  .checkbox-option:hover {
     background: #f0f0f0;
     border-color: var(--psd-primary, #340c46);
   }
 
-  .radio-option input[type="radio"] {
+  .checkbox-option input[type="checkbox"] {
     cursor: pointer;
     accent-color: var(--psd-primary, #340c46);
   }
 
-  .radio-label {
+  .checkbox-label {
     flex: 1;
     font-weight: 500;
   }
