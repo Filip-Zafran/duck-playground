@@ -250,13 +250,22 @@
           </div>
         {/if}
 
-        {#if poll.votes_preview && poll.votes_preview.length > 0}
-          <div class="voters-list">
-            <h3>Voters</h3>
+        {#if poll.counts && (poll.counts.date1 > 0 || poll.counts.date2 > 0 || poll.counts.date3 > 0 || poll.counts.none > 0)}
+          <div class="voters-summary">
+            <h3>Vote Summary</h3>
             <ul>
-              {#each poll.votes_preview as vote}
-                <li>{vote.voter_name} - {getDateLabel(vote.choice_date)}</li>
-              {/each}
+              {#if poll.counts.date1 > 0}
+                <li>{getDateLabel(poll.date1, poll.time1)}: <strong>{poll.counts.date1}</strong> {poll.counts.date1 === 1 ? 'person' : 'people'}</li>
+              {/if}
+              {#if poll.counts.date2 > 0}
+                <li>{getDateLabel(poll.date2, poll.time2)}: <strong>{poll.counts.date2}</strong> {poll.counts.date2 === 1 ? 'person' : 'people'}</li>
+              {/if}
+              {#if poll.counts.date3 > 0}
+                <li>{getDateLabel(poll.date3, poll.time3)}: <strong>{poll.counts.date3}</strong> {poll.counts.date3 === 1 ? 'person' : 'people'}</li>
+              {/if}
+              {#if poll.counts.none > 0}
+                <li>Can't make it this month: <strong>{poll.counts.none}</strong> {poll.counts.none === 1 ? 'person' : 'people'}</li>
+              {/if}
             </ul>
           </div>
         {/if}
@@ -446,6 +455,72 @@
     font-size: 1.5rem;
     color: var(--psd-primary, #340c46);
     margin-top: 0;
+  }
+
+  .vote-counts {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .count-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .count-item .label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .count-item .count {
+    background: var(--psd-primary, #340c46);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .voters-summary {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .voters-summary h3 {
+    color: var(--psd-primary, #340c46);
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+  }
+
+  .voters-summary ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .voters-summary li {
+    padding: 0.75rem 0;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .voters-summary li:last-child {
+    border-bottom: none;
+  }
+
+  .voters-summary li strong {
+    color: var(--psd-primary, #340c46);
+    font-size: 1.1rem;
   }
 
   .vote-counts {
