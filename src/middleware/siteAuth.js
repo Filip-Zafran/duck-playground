@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const PUBLIC_PATHS = ['/login', '/health', '/sw.js'];
-const PUBLIC_PREFIXES = ['/api/auth', '/_astro', '/images', '/style.css'];
+const PUBLIC_PREFIXES = ['/api/', '/_astro', '/images', '/style.css'];
 const PUBLIC_EXTENSIONS = ['.js', '.css', '.png', '.jpg', '.jpeg', '.ico', '.pdf', '.woff', '.woff2'];
 
 export const siteAuth = (req, res, next) => {

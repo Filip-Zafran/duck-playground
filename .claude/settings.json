@@ -20,7 +20,16 @@
       "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/interests)",
       "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/poll)",
       "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" http://localhost:4323/dashboard)",
-      "Bash(cp -r dist/* public/)"
+      "Bash(cp -r dist/* public/)",
+      "Bash(curl -s http://localhost:4323/ -L)",
+      "Bash(curl -i http://localhost:4323/)",
+      "Bash(pkill -f \"node src/server.js\")",
+      "Bash(pkill -f \"pnpm dev\")",
+      "Bash(curl -s -i http://localhost:4325/)",
+      "Bash(curl -s -i http://localhost:4326/)",
+      "Bash(curl -s http://localhost:4326/login)",
+      "Bash(killall -9 node pnpm)",
+      "Bash(git commit *)"
     ]
   }
 }
