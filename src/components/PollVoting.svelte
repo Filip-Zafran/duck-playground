@@ -167,7 +167,8 @@
                 <input
                   type="checkbox"
                   bind:checked={selectedDates.date1}
-                  disabled={submitting}
+                  disabled={submitting || cantMakeIt}
+                  on:change={() => { if (selectedDates.date1) cantMakeIt = false; }}
                 />
                 <span class="checkbox-label">{getDateLabel(poll.date1, poll.time1)}</span>
               </label>
@@ -175,7 +176,8 @@
                 <input
                   type="checkbox"
                   bind:checked={selectedDates.date2}
-                  disabled={submitting}
+                  disabled={submitting || cantMakeIt}
+                  on:change={() => { if (selectedDates.date2) cantMakeIt = false; }}
                 />
                 <span class="checkbox-label">{getDateLabel(poll.date2, poll.time2)}</span>
               </label>
@@ -183,15 +185,17 @@
                 <input
                   type="checkbox"
                   bind:checked={selectedDates.date3}
-                  disabled={submitting}
+                  disabled={submitting || cantMakeIt}
+                  on:change={() => { if (selectedDates.date3) cantMakeIt = false; }}
                 />
                 <span class="checkbox-label">{getDateLabel(poll.date3, poll.time3)}</span>
               </label>
-              <label class="checkbox-option">
+              <label class="checkbox-option cant-make-it">
                 <input
                   type="checkbox"
                   bind:checked={cantMakeIt}
                   disabled={submitting}
+                  on:change={() => { if (cantMakeIt) { selectedDates.date1 = false; selectedDates.date2 = false; selectedDates.date3 = false; } }}
                 />
                 <span class="checkbox-label">I can't make it this month</span>
               </label>
@@ -401,6 +405,16 @@
   .checkbox-option:hover {
     background: #f0f0f0;
     border-color: var(--psd-primary, #340c46);
+  }
+
+  .checkbox-option.cant-make-it {
+    background: #e3f2fd;
+    border-color: #90caf9;
+  }
+
+  .checkbox-option.cant-make-it:hover {
+    background: #bbdefb;
+    border-color: #64b5f6;
   }
 
   .checkbox-option input[type="checkbox"] {
