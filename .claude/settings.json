@@ -39,7 +39,12 @@
       "Bash(grep -E \"\\\\.\\(astro|svelte\\)$\")",
       "Bash(curl -s http://localhost:3001/poll/)",
       "Bash(node -e ' *)",
-      "Bash(curl -s http://localhost:4321/api/polls)"
+      "Bash(curl -s http://localhost:4321/api/polls)",
+      "Bash(curl -s https://duck-playground.onrender.com/poll-vote/?token=4379a477-d36d-4ba6-b716-3ac127899960)",
+      "Bash(curl -s https://duck-playground.onrender.com/poll-vote/index.html)",
+      "Bash(curl -s https://duck-playground.onrender.com/poll-vote/)",
+      "Bash(curl -s -X POST https://duck-playground.onrender.com/api/vote/25269170-38f8-4db3-8d7f-ac74ae9d25b7 -H 'Content-Type: application/json' -d '{\"voter_name\":\"Test\",\"choice\":\"date1\",\"voter_token\":\"test\"}')",
+      "Bash(grep -E \"\\\\.\\(ts|js|astro\\)$\")"
     ]
   }
 }
