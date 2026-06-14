@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const router = Router();
 
-const getSitePassword = () => process.env.SITE_PASSWORD || 'duck';
+const getSitePassword = () => process.env.ADMIN_PASSWORD || process.env.SITE_PASSWORD || 'duck';
 const getSecret = () => process.env.JWT_SECRET || 'duck-site-secret';
 const getCookieOpts = () => ({
   httpOnly: true,
