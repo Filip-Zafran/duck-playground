@@ -142,12 +142,12 @@ router.get('/:id/results', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { admin_token } = req.query;
+    const { admin_password } = req.body;
 
-    // Verify admin token matches site-wide admin token
-    const siteAdminToken = process.env.ADMIN_TOKEN || 'default-admin-token';
-    if (admin_token !== siteAdminToken) {
-      return res.status(401).json({ error: 'Invalid admin token' });
+    // Verify admin password matches global admin password
+    const globalAdminPassword = process.env.ADMIN_PASSWORD;
+    if (!admin_password || admin_password !== globalAdminPassword) {
+      return res.status(401).json({ error: 'Invalid admin password' });
     }
 
     // Delete poll (cascades to votes and invites)

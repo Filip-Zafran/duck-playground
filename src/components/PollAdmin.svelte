@@ -50,17 +50,7 @@
 
   onMount(async () => {
     adminToken = new URLSearchParams(window.location.search).get('admin') || '';
-    console.log('Admin token from URL:', adminToken, 'length:', adminToken.length);
     await loadPolls();
-    console.log('Polls loaded:', polls.length, 'polls');
-    console.log('Comparing adminToken with poll admin_tokens:');
-    polls.forEach(poll => {
-      const match = adminToken === poll.admin_token;
-      console.log(`Poll "${poll.title}": [${adminToken}] === [${poll.admin_token}]? ${match}`);
-      if (!match && adminToken && poll.admin_token) {
-        console.log(`  URL token length: ${adminToken.length}, DB token length: ${poll.admin_token.length}`);
-      }
-    });
 
     // Start timer for polls
     updatePollTimers();
@@ -239,12 +229,15 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`/api/polls/${pollId}?admin_token=${adminToken}`, {
-        method: 'DELETE'
+      const response = await fetch(`/api/polls/${pollId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ admin_password: adminToken })
       });
 
       if (!response.ok) {
-        alert('Failed to delete poll');
+        const error = await response.json();
+        alert('Failed to delete poll: ' + (error.error || 'Unknown error'));
         return;
       }
 
