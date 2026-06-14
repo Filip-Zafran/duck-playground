@@ -86,6 +86,31 @@ app.use('/api/images', imageRoutes);
 app.use('/api/polls', pollRoutes);
 app.use('/api/vote', voteRoutes);
 
+// Debug endpoint - get admin token for a poll (dev only)
+app.get('/api/debug/poll-admin-token/:pollId', async (req, res) => {
+  try {
+    const { pollId } = req.params;
+    const result = await pool.query(
+      'SELECT id, title, admin_token FROM polls WHERE id = $1',
+      [pollId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Poll not found' });
+    }
+
+    const poll = result.rows[0];
+    res.json({
+      pollId: poll.id,
+      title: poll.title,
+      adminToken: poll.admin_token,
+      managementLink: `https://duck-playground.onrender.com/poll?admin=${poll.admin_token}`
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
