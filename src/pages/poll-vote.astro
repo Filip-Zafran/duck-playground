@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PollVoting from '../components/PollVoting.svelte';
+
+const token = Astro.url.searchParams.get('token') || '';
 ---
 
 <Layout title="Vote on Poll - PSD">
-  <PollVoting client:load />
+  <PollVoting client:load pollId={token} />
 </Layout>
