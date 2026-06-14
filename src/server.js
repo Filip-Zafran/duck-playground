@@ -46,11 +46,8 @@ app.use(cors({
 // Site-wide authentication middleware (before static files)
 app.use(siteAuth);
 
-// Serve static files (Astro build output)
-app.use(express.static('public'));
-app.use(express.static('dist'));
-
 // Poll token injection middleware - embed token in HTML for client-side access
+// Must be BEFORE static files middleware so it can intercept the response
 app.get('/poll-vote/', (req, res, next) => {
   const token = req.query.token || '';
   const originalSend = res.send;
@@ -58,7 +55,8 @@ app.get('/poll-vote/', (req, res, next) => {
   res.send = function(data) {
     if (typeof data === 'string' && data.includes('</head>')) {
       // Inject token as window variable before </head>
-      const injection = `<script>window.__POLL_TOKEN__ = "${token}";</script>`;
+      // Use JSON.stringify to safely escape any special characters in token
+      const injection = `<script>window.__POLL_TOKEN__ = ${JSON.stringify(token)};</script>`;
       data = data.replace('</head>', injection + '</head>');
     }
     originalSend.call(this, data);
@@ -66,6 +64,10 @@ app.get('/poll-vote/', (req, res, next) => {
 
   next();
 });
+
+// Serve static files (Astro build output)
+app.use(express.static('public'));
+app.use(express.static('dist'));
 
 // Routes
 app.use('/api/admin', adminRoutes);

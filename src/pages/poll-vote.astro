@@ -1,11 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PollVoting from '../components/PollVoting.svelte';
-
-const token = Astro.url.searchParams.get('token') || '';
 ---
 
 <Layout title="Vote on Poll - PSD">
-  <div data-poll-token={token} style="display: none;">poll-token-marker</div>
-  <PollVoting client:load pollId={token} />
+  <script>
+    // Extract token from URL query parameter (client-side since server strips it)
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token') || '';
+    if (token) {
+      window.__POLL_TOKEN__ = token;
+      // Also update the data attribute
+      const marker = document.querySelector('[data-poll-token]');
+      if (marker) {
+        marker.setAttribute('data-poll-token', token);
+      }
+    }
+  </script>
+  <div data-poll-token="" style="display: none;">poll-token-marker</div>
+  <PollVoting client:load pollId="" />
 </Layout>

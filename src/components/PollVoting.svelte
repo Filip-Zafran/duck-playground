@@ -45,6 +45,15 @@
       pollId = window.__POLL_TOKEN__;
     }
 
+    // Fallback: extract from data attribute
+    if (!pollId) {
+      const marker = document.querySelector('[data-poll-token]');
+      const tokenFromAttr = marker?.getAttribute('data-poll-token');
+      if (tokenFromAttr) {
+        pollId = tokenFromAttr;
+      }
+    }
+
     if (!pollId) {
       error = 'No poll ID provided';
       loading = false;
@@ -53,8 +62,10 @@
 
     try {
       const response = await fetch(`/api/vote/${pollId}`);
+
       if (!response.ok) {
-        error = 'Poll not found';
+        const errorData = await response.json();
+        error = errorData.error || 'Poll not found';
         loading = false;
         return;
       }
