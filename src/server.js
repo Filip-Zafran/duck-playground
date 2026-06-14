@@ -46,26 +46,30 @@ app.use(cors({
 // Site-wide authentication middleware (before static files)
 app.use(siteAuth);
 
-// Poll token injection middleware - intercept all responses for poll-vote page
-app.use((req, res, next) => {
-  const originalSend = res.send;
+// Poll vote page - serve with token injection
+app.get('/poll-vote/', (req, res, next) => {
+  const fs = require('fs');
+  const path = require('path');
+  const filePath = path.join(process.cwd(), 'dist', 'poll-vote', 'index.html');
 
-  res.send = function(data) {
-    if (req.path.startsWith('/poll-vote') && typeof data === 'string' && data.includes('</body>')) {
-      const token = req.query.token || '';
-      const injection = `<script>
+  fs.readFile(filePath, 'utf-8', (err, data) => {
+    if (err) {
+      return next(); // Fall through to static middleware if file not found
+    }
+
+    // Inject token extraction script before </body>
+    const injection = `<script>
 const params = new URLSearchParams(window.location.search);
 const token = params.get('token') || '';
 if (token) {
   window.__POLL_TOKEN__ = token;
 }
 </script>`;
-      data = data.replace('</body>', injection + '</body>');
-    }
-    originalSend.call(this, data);
-  };
 
-  next();
+    const modified = data.replace('</body>', injection + '</body>');
+    res.set('Content-Type', 'text/html');
+    res.send(modified);
+  });
 });
 
 // Serve static files (Astro build output)
