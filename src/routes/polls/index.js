@@ -138,17 +138,13 @@ router.get('/:id/results', async (req, res) => {
   }
 });
 
-// DELETE /api/polls/:id - Delete poll (admin)
+// DELETE /api/polls/:id - Delete poll (authenticated users only)
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { admin_password } = req.body;
 
-    // Verify admin password matches global admin password
-    const globalAdminPassword = process.env.ADMIN_PASSWORD;
-    if (!admin_password || admin_password !== globalAdminPassword) {
-      return res.status(401).json({ error: 'Invalid admin password' });
-    }
+    // siteAuth middleware ensures user is authenticated
+    // If we get here, the user has a valid session
 
     // Delete poll (cascades to votes and invites)
     await pool.query('DELETE FROM polls WHERE id = $1', [id]);

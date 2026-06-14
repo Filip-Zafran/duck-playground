@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
 
-  let adminToken = '';
+  let isAuthenticated = false;
   let polls = [];
   let loading = true;
   let showForm = false;
@@ -49,7 +49,15 @@
   }
 
   onMount(async () => {
-    adminToken = new URLSearchParams(window.location.search).get('admin') || '';
+    // Check if user is authenticated
+    try {
+      const response = await fetch('/api/auth/status');
+      const data = await response.json();
+      isAuthenticated = data.authenticated;
+    } catch (e) {
+      console.error('Error checking auth status:', e);
+    }
+
     await loadPolls();
 
     // Start timer for polls
@@ -230,9 +238,7 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
 
     try {
       const response = await fetch(`/api/polls/${pollId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ admin_password: adminToken })
+        method: 'DELETE'
       });
 
       if (!response.ok) {
@@ -468,7 +474,7 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
               >
                 View Results
               </button>
-              {#if adminToken}
+              {#if isAuthenticated}
                 <button
                   class="btn-delete"
                   on:click={() => deletePoll(poll.id, poll.title)}
