@@ -40,31 +40,12 @@
   }
 
   onMount(async () => {
-    // Try to get token from:
-    // 1. Prop (from Astro)
-    // 2. Data attribute on hidden div
-    // 3. URL query parameter
-    // 4. URL path
-
+    // Extract token from full URL using regex (most reliable method)
     if (!pollId) {
-      // Check for hidden div with data attribute
-      const tokenMarker = document.querySelector('[data-poll-token]');
-      if (tokenMarker && tokenMarker.dataset.pollToken) {
-        pollId = tokenMarker.dataset.pollToken;
-      }
-    }
-
-    if (!pollId) {
-      // Try query parameter
-      const params = new URLSearchParams(window.location.search);
-      pollId = params.get('token') || '';
-    }
-
-    if (!pollId) {
-      // Try path parameter
-      const match = window.location.pathname.match(/token=([a-f0-9-]+)/);
-      if (match) {
-        pollId = match[1];
+      const fullUrl = window.location.href;
+      const tokenMatch = fullUrl.match(/[?&]token=([a-f0-9-]+)/);
+      if (tokenMatch && tokenMatch[1]) {
+        pollId = tokenMatch[1];
       }
     }
 
