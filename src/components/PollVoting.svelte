@@ -40,7 +40,7 @@
   }
 
   onMount(async () => {
-    // Extract token from full URL using regex (most reliable method)
+    // v2: Force rebuild - Extract token from full URL using regex (most reliable method)
     if (!pollId) {
       const fullUrl = window.location.href;
       const tokenMatch = fullUrl.match(/[?&]token=([a-f0-9-]+)/);
