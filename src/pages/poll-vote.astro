@@ -4,17 +4,11 @@ import PollVoting from '../components/PollVoting.svelte';
 ---
 
 <Layout title="Vote on Poll - PSD">
-  <script>
-    // Extract token from URL query parameter (client-side since server strips it)
+  <script is:inline>
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token') || '';
     if (token) {
       window.__POLL_TOKEN__ = token;
-      // Also update the data attribute
-      const marker = document.querySelector('[data-poll-token]');
-      if (marker) {
-        marker.setAttribute('data-poll-token', token);
-      }
     }
   </script>
   <div data-poll-token="" style="display: none;">poll-token-marker</div>
