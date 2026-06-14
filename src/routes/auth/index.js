@@ -45,10 +45,15 @@ router.post('/login', (req, res) => {
   res.redirect('/login?error=1');
 });
 
+router.get('/status', (req, res) => {
+  const token = req.cookies.duck_session;
+  res.json({ authenticated: !!token });
+});
+
 router.post('/logout', (req, res) => {
   console.log('🚪 POST /api/auth/logout');
   res.clearCookie('duck_session', getCookieOpts());
-  res.redirect('/login');
+  res.json({ success: true });
 });
 
 export default router;
