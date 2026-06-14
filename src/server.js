@@ -142,11 +142,29 @@ io.on('connection', (socket) => {
 
 // Debug: Log dist folder info
 const distPath = path.join(process.cwd(), 'dist');
+const parentPath = path.join(process.cwd(), '..');
+const rootPath = path.join(process.cwd(), '../..');
+
+console.log('=== DEBUG INFO ===');
+console.log('CWD:', process.cwd());
 console.log('DIST PATH:', distPath);
 console.log('DIST EXISTS:', fs.existsSync(distPath));
+
+// Check parent directories too
+console.log('PARENT EXISTS:', fs.existsSync(parentPath));
+console.log('ROOT EXISTS:', fs.existsSync(rootPath));
+
+// List what's in current directory
+console.log('CWD CONTENTS:', fs.readdirSync(process.cwd()).filter(f => !f.startsWith('.')).slice(0, 15));
+
 if (fs.existsSync(distPath)) {
   console.log('DIST CONTENTS:', fs.readdirSync(distPath).slice(0, 10));
+  console.log('POLL FOLDER EXISTS:', fs.existsSync(path.join(distPath, 'poll')));
+  console.log('POLL INDEX EXISTS:', fs.existsSync(path.join(distPath, 'poll', 'index.html')));
+} else {
+  console.log('⚠️  DIST FOLDER NOT FOUND!');
 }
+console.log('==================');
 
 // Development: Proxy all non-API requests to Astro dev server (4321)
 if (isDev) {
