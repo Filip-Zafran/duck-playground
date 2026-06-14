@@ -140,6 +140,14 @@ io.on('connection', (socket) => {
   });
 });
 
+// Debug: Log dist folder info
+const distPath = path.join(process.cwd(), 'dist');
+console.log('DIST PATH:', distPath);
+console.log('DIST EXISTS:', fs.existsSync(distPath));
+if (fs.existsSync(distPath)) {
+  console.log('DIST CONTENTS:', fs.readdirSync(distPath).slice(0, 10));
+}
+
 // Development: Proxy all non-API requests to Astro dev server (4321)
 if (isDev) {
   app.use((req, res) => {
@@ -174,9 +182,24 @@ if (isDev) {
   });
 }
 
-// SPA fallback: serve index.html for unmatched routes (client-side routing)
+// SPA fallback: Serve Astro's nested index.html files
 app.get('*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'dist/index.html'));
+  const cleanPath = req.path.replace(/^\/+|\/+$/g, '');
+
+  const pagePath = cleanPath
+    ? path.join(distPath, cleanPath, 'index.html')
+    : path.join(distPath, 'index.html');
+
+  console.log('REQUEST:', req.path);
+  console.log('TRY PAGE:', pagePath);
+  console.log('PAGE EXISTS:', fs.existsSync(pagePath));
+
+  if (fs.existsSync(pagePath)) {
+    return res.sendFile(pagePath);
+  }
+
+  console.log('FALLBACK TO:', path.join(distPath, 'index.html'));
+  return res.sendFile(path.join(distPath, 'index.html'));
 });
 
 // Error handling
