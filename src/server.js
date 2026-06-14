@@ -176,10 +176,10 @@ if (isDev) {
   // Production: Serve the requested file from dist, fallback to index.html for SPA routing
   app.get('*', (req, res) => {
     const filePath = path.join(process.cwd(), 'dist', req.path.slice(1), 'index.html');
-    res.sendFile(filePath, { root: '.' }, (err) => {
+    res.sendFile(filePath, (err) => {
       if (err) {
         // If file not found, serve index.html for client-side routing
-        res.sendFile(path.join(process.cwd(), 'dist/index.html'), { root: '.' });
+        res.sendFile(path.join(process.cwd(), 'dist/index.html'));
       }
     });
   });
