@@ -7,7 +7,10 @@ const PUBLIC_EXTENSIONS = ['.js', '.css', '.png', '.jpg', '.jpeg', '.ico', '.pdf
 export const siteAuth = (req, res, next) => {
   const path = req.path;
 
-  if (PUBLIC_PATHS.includes(path)) return next();
+  // Normalize path for comparison (remove trailing slash)
+  const normalizedPath = path.endsWith('/') && path !== '/' ? path.slice(0, -1) : path;
+
+  if (PUBLIC_PATHS.includes(path) || PUBLIC_PATHS.includes(normalizedPath)) return next();
   if (PUBLIC_PREFIXES.some(p => path.startsWith(p))) return next();
   if (PUBLIC_EXTENSIONS.some(e => path.endsWith(e))) return next();
 
