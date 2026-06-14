@@ -53,11 +53,16 @@ app.get('/poll-vote/', (req, res, next) => {
   const originalSend = res.send;
 
   res.send = function(data) {
-    if (typeof data === 'string' && data.includes('</head>')) {
-      // Inject token as window variable before </head>
-      // Use JSON.stringify to safely escape any special characters in token
-      const injection = `<script>window.__POLL_TOKEN__ = ${JSON.stringify(token)};</script>`;
-      data = data.replace('</head>', injection + '</head>');
+    if (typeof data === 'string' && data.includes('</body>')) {
+      // Inject token extraction script before </body>
+      const injection = `<script>
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token') || '';
+if (token) {
+  window.__POLL_TOKEN__ = token;
+}
+</script>`;
+      data = data.replace('</body>', injection + '</body>');
     }
     originalSend.call(this, data);
   };
