@@ -6,7 +6,6 @@
   let poll = null;
   let loading = true;
   let error = '';
-  let debugInfo = '';
   let voterName = '';
   let selectedDates = {
     date1: false,
@@ -41,60 +40,49 @@
   }
 
   onMount(async () => {
-    debugInfo = `[STEP 1] Component mounted. Prop pollId: "${pollId}"`;
+    // Try to get token from:
+    // 1. Prop (from Astro)
+    // 2. Data attribute on hidden div
+    // 3. URL query parameter
+    // 4. URL path
 
-    // Step 1: Check prop
-    if (pollId) {
-      debugInfo += `\n[STEP 2] Got pollId from prop: ${pollId}`;
-    } else {
-      debugInfo += `\n[STEP 2] No pollId prop, checking URL...`;
-
-      // Try query parameter: ?token=xxx
-      const params = new URLSearchParams(window.location.search);
-      const tokenFromQuery = params.get('token');
-      debugInfo += `\n[STEP 3] window.location.search: "${window.location.search}"`;
-      debugInfo += `\n[STEP 4] token from query: "${tokenFromQuery}"`;
-
-      if (tokenFromQuery) {
-        pollId = tokenFromQuery;
-        debugInfo += `\n[STEP 5] ✓ Using token from query parameter`;
-      } else {
-        // Try path parameter: /token=xxx
-        debugInfo += `\n[STEP 5] No query token, trying path...`;
-        debugInfo += `\n[STEP 6] window.location.pathname: "${window.location.pathname}"`;
-        const match = window.location.pathname.match(/token=([a-f0-9-]+)/);
-        debugInfo += `\n[STEP 7] Regex match result: ${match ? match[1] : 'null'}`;
-
-        if (match) {
-          pollId = match[1];
-          debugInfo += `\n[STEP 8] ✓ Using token from path: ${pollId}`;
-        }
+    if (!pollId) {
+      // Check for hidden div with data attribute
+      const tokenMarker = document.querySelector('[data-poll-token]');
+      if (tokenMarker && tokenMarker.dataset.pollToken) {
+        pollId = tokenMarker.dataset.pollToken;
       }
     }
 
     if (!pollId) {
-      debugInfo += `\n[ERROR] No pollId found after all attempts!`;
-      error = debugInfo;
+      // Try query parameter
+      const params = new URLSearchParams(window.location.search);
+      pollId = params.get('token') || '';
+    }
+
+    if (!pollId) {
+      // Try path parameter
+      const match = window.location.pathname.match(/token=([a-f0-9-]+)/);
+      if (match) {
+        pollId = match[1];
+      }
+    }
+
+    if (!pollId) {
+      error = 'No poll ID provided';
       loading = false;
       return;
     }
 
-    debugInfo += `\n[STEP 9] Fetching API: /api/vote/${pollId}`;
-
     try {
       const response = await fetch(`/api/vote/${pollId}`);
-      debugInfo += `\n[STEP 10] API response status: ${response.status}`;
-
       if (!response.ok) {
-        const errorData = await response.json();
-        debugInfo += `\n[ERROR] API returned ${response.status}: ${errorData.error}`;
-        error = debugInfo;
+        error = 'Poll not found';
         loading = false;
         return;
       }
 
       poll = await response.json();
-      debugInfo += `\n[STEP 11] ✓ Poll loaded successfully: "${poll.title}"`;
       loading = false;
 
       // Start timer if poll has a deadline
@@ -103,8 +91,8 @@
         timerInterval = setInterval(updateTimer, 1000);
       }
     } catch (e) {
-      debugInfo += `\n[ERROR] Exception: ${e.message}`;
-      error = debugInfo;
+      error = 'Failed to load poll';
+      console.error(e);
       loading = false;
     }
 

@@ -3,14 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import PollVoting from '../components/PollVoting.svelte';
 
 const token = Astro.url.searchParams.get('token') || '';
-const fullUrl = Astro.url.toString();
 ---
 
 <Layout title="Vote on Poll - PSD">
-  <div style="background: #f0f0f0; padding: 1rem; margin: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #333;">
-    <strong>🔍 PAGE DEBUG INFO:</strong>
-    <br/>URL: {fullUrl}
-    <br/>Token from Astro: {token || '(empty)'}
-  </div>
+  <div data-poll-token={token} style="display: none;">poll-token-marker</div>
   <PollVoting client:load pollId={token} />
 </Layout>
