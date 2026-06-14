@@ -172,18 +172,12 @@ if (isDev) {
       req.pipe(proxyReq);
     }
   });
-} else {
-  // Production: Serve the requested file from dist, fallback to index.html for SPA routing
-  app.get('*', (req, res) => {
-    const filePath = path.join(process.cwd(), 'dist', req.path.slice(1), 'index.html');
-    res.sendFile(filePath, (err) => {
-      if (err) {
-        // If file not found, serve index.html for client-side routing
-        res.sendFile(path.join(process.cwd(), 'dist/index.html'));
-      }
-    });
-  });
 }
+
+// SPA fallback: serve index.html for unmatched routes (client-side routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'dist/index.html'));
+});
 
 // Error handling
 app.use(errorHandler);
