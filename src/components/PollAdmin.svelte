@@ -261,7 +261,7 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
     <p>Create and manage scheduling polls for events</p>
   </div>
 
-  {#if adminToken}
+  {#if isAuthenticated}
     <div class="admin-info">
       <p>✅ Admin mode active</p>
     </div>

@@ -49,6 +49,15 @@ app.use(cors({
 // Site-wide authentication middleware (before static files)
 app.use(siteAuth);
 
+// Routes (MUST come before static files and catch-all handler)
+app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/matching', matchingRoutes);
+app.use('/api/images', imageRoutes);
+app.use('/api/polls', pollRoutes);
+app.use('/api/vote', voteRoutes);
+
 // Poll vote page - serve with token injection
 app.get('/poll-vote/', (req, res, next) => {
   const filePath = path.join(process.cwd(), 'dist', 'poll-vote', 'index.html');
@@ -76,15 +85,6 @@ if (token) {
 // Serve static files (Astro build output)
 app.use(express.static('public'));
 app.use(express.static('dist'));
-
-// Routes
-app.use('/api/admin', adminRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/events', eventRoutes);
-app.use('/api/matching', matchingRoutes);
-app.use('/api/images', imageRoutes);
-app.use('/api/polls', pollRoutes);
-app.use('/api/vote', voteRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
