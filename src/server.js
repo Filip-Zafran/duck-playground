@@ -83,8 +83,9 @@ if (token) {
   });
 });
 
-// Serve static files in production, proxy in development
-if (process.env.NODE_ENV === 'production') {
+// Serve static files by default (production), only proxy in development
+const isDev = process.env.NODE_ENV === 'development';
+if (!isDev) {
   app.use(express.static('public'));
   app.use(express.static('dist'));
 }
@@ -140,7 +141,7 @@ io.on('connection', (socket) => {
 });
 
 // Development: Proxy all non-API requests to Astro dev server (4321)
-if (process.env.NODE_ENV !== 'production') {
+if (isDev) {
   app.use((req, res) => {
     const options = {
       hostname: 'localhost',
