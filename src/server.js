@@ -46,15 +46,13 @@ app.use(cors({
 // Site-wide authentication middleware (before static files)
 app.use(siteAuth);
 
-// Poll token injection middleware - embed token in HTML for client-side access
-// Must be BEFORE static files middleware so it can intercept the response
-app.get('/poll-vote/', (req, res, next) => {
-  const token = req.query.token || '';
+// Poll token injection middleware - intercept all responses for poll-vote page
+app.use((req, res, next) => {
   const originalSend = res.send;
 
   res.send = function(data) {
-    if (typeof data === 'string' && data.includes('</body>')) {
-      // Inject token extraction script before </body>
+    if (req.path.startsWith('/poll-vote') && typeof data === 'string' && data.includes('</body>')) {
+      const token = req.query.token || '';
       const injection = `<script>
 const params = new URLSearchParams(window.location.search);
 const token = params.get('token') || '';
