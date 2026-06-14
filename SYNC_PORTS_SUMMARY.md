@@ -1,15 +1,19 @@
 # Port Sync Issue - Complete Summary
 
-## Current Situation (June 14, 2026)
+## Current Situation (June 14, 2026 - End of Session)
 
 ### ✅ What Works
 - **Port 4321** (Astro dev server): Shows latest code with hot reload
 - **Port 3001** (Express + proxy): Shows identical content to 4321 via proxy
-- Both local ports are **perfectly synced**
+- Both local ports are **perfectly synced** with Express proxying to Astro dev
+- **Architecture fully validated**: Proxy architecture working as designed
 
 ### ❌ What Doesn't Work
-- **Live Render deployment** (https://duck-playground.onrender.com): Still shows old code
-- Render builds dist/ correctly, but serves wrong files at runtime
+- **Live Render deployment** (https://duck-playground.onrender.com): **Still serves OLD code**
+- Specific evidence: Missing login/logout button in Header component
+  - Localhost: `<button class="login-btn">🔐 Login</button>` ✅
+  - Render: No login button ❌
+  - Also different CSS class names: `s-c1MG4BWNDc59` (new) vs `svelte-oiwvqb` (old)
 
 ## Technologies Stack
 
@@ -53,42 +57,63 @@ Development Mode:
    Everything else → proxies to 4321
 ```
 
-## Attempts Made
+## All Attempts Made (6/14/2026)
 
-### Attempt 1: Rebuild & Restart ❌
-- Ran `pnpm build && pnpm dev`
-- Didn't work: `pnpm dev` runs Astro in dev mode (doesn't update `dist/`)
-- Express still served old files
+### Early Attempts: Port Sync
+1. **Rebuild & Restart** ❌ - `pnpm dev` doesn't update `dist/`
+2. **Proxy Middleware** ❌ - Static files served before proxy reached
+3. **`astro build --watch`** ❌ - Command doesn't exist
+4. **Production Static Serving** ❌ - Multiple path issues
 
-### Attempt 2: Proxy Middleware ❌
-- Added code to proxy requests from 3001 to 4321
-- Didn't work: Static files were served before proxy was reached
+### Late Attempts: Fix Render Deployment
+5. **Explicit nested index.html serving** ❌
+   - Added file existence checks and logging
+   - Render logs showed: `POLL FOLDER EXISTS: true`, `POLL INDEX EXISTS: true`
+   - But served old compiled code anyway
 
-### Attempt 3: `astro build --watch` ❌
-- Changed dev script to rebuild `dist/` on file changes
-- Didn't work: Command doesn't exist
+6. **Debug logging** ✅
+   - Confirmed dist/ folder exists on Render
+   - Confirmed `/poll/index.html` exists
+   - Path logic appears correct
+   - Yet still serving old Header component
 
-### Attempt 4: Production Static File Serving ❌
-- Modified Express to serve `dist/` in production
-- Render builds dist/ correctly, but:
-  - First fix: Served home page for all routes
-  - Second fix: Path doubling error (`/opt/render/project/src/opt/render/project/src/dist/...`)
-  - Third fix: Removed `{ root: '.' }` option
+7. **Clean rebuild** ❌
+   - Changed build command: `rm -rf dist node_modules && pnpm install && pnpm build`
+   - Render logs show "Build successful"
+   - dist/ files confirmed built and uploaded
+   - **Still serves old code after restart**
 
-## Current Problem (Unresolved)
+## The Unsolved Mystery
 
-**Issue**: Live site shows old code even though:
-- Render successfully runs `pnpm build`
-- All 17 pages build correctly
-- Build is uploaded to Render
-- Server starts without errors
+**Paradox**: Render appears to build and deploy correctly, but serves old code.
 
-**Evidence**:
-- Local: `dist/poll/index.html` has title `"Manage Polls - PSD"`
-- Local ports 3001 & 4321: Both show correct Poll Management page
-- Live: Still shows home page (dev hub) for `/poll` route
+### Evidence of the Problem
+```
+Localhost 3001 (Latest Code):
+- Header class: s-c1MG4BWNDc59
+- Login button: ✅ Present (<button class="login-btn">🔐 Login</button>)
+- Styles: Unminified with data-vite-dev-id (dev version)
 
-**Suspect Cause**: Express file serving logic still incorrect, OR dist/ files not being found at runtime
+Render Live (Old Code):
+- Header class: svelte-oiwvqb
+- Login button: ❌ Missing entirely
+- Styles: Minified/compiled (built version)
+```
+
+### What We Know
+1. ✅ Render successfully runs `pnpm build`
+2. ✅ All 17 pages build correctly  
+3. ✅ Build is uploaded (logs show "Uploaded in 5.7s")
+4. ✅ `/poll/index.html` exists on server (`POLL FOLDER EXISTS: true`)
+5. ✅ Server starts without errors
+6. ❌ Yet serves 2+ versions behind current code
+
+### Possible Root Causes (Unconfirmed)
+- **Render instance caching**: Render might be caching the previous deployment
+- **dist/ not being updated**: Build runs but doesn't overwrite dist/
+- **Static file caching**: Render's reverse proxy/CDN caching old files
+- **Wrong entry point**: Express might be serving from wrong location
+- **Process not restarting**: Old process still running even after deploy
 
 ## File Structure
 
@@ -104,9 +129,51 @@ dist/
 └── ... (other pages)
 ```
 
-## Next Steps Needed
+## Next Steps to Resolve Render Issue
 
-1. Debug why `dist/poll/index.html` isn't being served on Render
-2. Check file permissions on Render
-3. Verify Express path logic is correct
-4. Consider alternative: rebuild dist/ on each Render deployment
+1. **Verify dist/ contents on Render**
+   - SSH into Render or add endpoint that lists dist/ directory contents
+   - Compare file modification timestamps to deployment time
+   - Verify Header.*.js file hash matches localhost
+
+2. **Check Render process state**
+   - Confirm old process actually stopped
+   - Add startup logging to see which dist/ path Express is using
+   - Monitor memory/PID to ensure clean restart
+
+3. **Consider Render platform issues**
+   - Check if Render caches build artifacts between deployments
+   - Look for CDN/proxy caching on Render's infrastructure
+   - Verify build directory is actually `/opt/render/project/src/dist`
+
+4. **Alternative solutions if platform issue**
+   - Use Render's environment variable: force cache bust
+   - Trigger a full rebuild (not incremental)
+   - Contact Render support about deployment caching
+
+## Development Architecture (Final)
+
+**Local Development** ✅ (WORKING):
+```
+Browser → localhost:3001 (Express proxy)
+              ↓
+         localhost:4321 (Astro dev)
+              ↓
+         Latest code with hot reload
+```
+
+**Production** ❌ (BROKEN):
+```
+Browser → render.com (Express server)
+              ↓
+         dist/ (old compiled files)
+              ↓
+         Stale code served
+```
+
+## Summary
+
+- **Local ports 3001 & 4321**: FULLY SYNCED ✅ via Express proxy to Astro dev
+- **Architecture**: Clean, working, validated
+- **Issue**: Render deployment not syncing with latest dist/ 
+- **Status**: Unsolved—appears to be Render platform-level caching or deployment issue
