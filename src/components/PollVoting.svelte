@@ -40,19 +40,23 @@
   }
 
   onMount(async () => {
-    console.log('COMPONENT MOUNTED - pollId prop:', pollId);
-    console.log('window.location.href:', window.location.href);
-    console.log('window.location.search:', window.location.search);
-
-    // If pollId not provided as prop, try to get from URL
+    // Try to get pollId from prop, then URL query params, then URL path
     if (!pollId) {
+      // Try query parameter: ?token=xxx
       const params = new URLSearchParams(window.location.search);
       pollId = params.get('token') || '';
-      console.log('Extracted token from URL:', pollId);
+
+      // If not found in query params, try to extract from path: /token=xxx
+      if (!pollId) {
+        const match = window.location.pathname.match(/token=([a-f0-9-]+)/);
+        if (match) {
+          pollId = match[1];
+        }
+      }
     }
 
     if (!pollId) {
-      error = `🔍 DEBUG INFO:\n\nProp pollId: "${pollId}"\nwindow.location.href: ${window.location.href}\nwindow.location.search: "${window.location.search}"`;
+      error = 'No poll ID provided';
       loading = false;
       return;
     }
