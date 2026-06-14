@@ -40,13 +40,9 @@
   }
 
   onMount(async () => {
-    // v2: Force rebuild - Extract token from full URL using regex (most reliable method)
-    if (!pollId) {
-      const fullUrl = window.location.href;
-      const tokenMatch = fullUrl.match(/[?&]token=([a-f0-9-]+)/);
-      if (tokenMatch && tokenMatch[1]) {
-        pollId = tokenMatch[1];
-      }
+    // Get token from server-injected window variable
+    if (!pollId && window.__POLL_TOKEN__) {
+      pollId = window.__POLL_TOKEN__;
     }
 
     if (!pollId) {

@@ -50,6 +50,23 @@ app.use(siteAuth);
 app.use(express.static('public'));
 app.use(express.static('dist'));
 
+// Poll token injection middleware - embed token in HTML for client-side access
+app.get('/poll-vote/', (req, res, next) => {
+  const token = req.query.token || '';
+  const originalSend = res.send;
+
+  res.send = function(data) {
+    if (typeof data === 'string' && data.includes('</head>')) {
+      // Inject token as window variable before </head>
+      const injection = `<script>window.__POLL_TOKEN__ = "${token}";</script>`;
+      data = data.replace('</head>', injection + '</head>');
+    }
+    originalSend.call(this, data);
+  };
+
+  next();
+});
+
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
