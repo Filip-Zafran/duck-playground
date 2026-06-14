@@ -487,10 +487,7 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
 
             <div class="poll-dates">
               <div class="date-info">
-                <small>Created: {new Date(poll.created_at).toLocaleDateString()}</small>
-                {#if poll.timer_end}
-                  <small class="timer-badge">⏱️ {pollTimers[poll.id] || 'Loading...'}</small>
-                {/if}
+                <small>Created: {new Date(poll.created_at).toLocaleDateString()} {#if poll.timer_end}<span class="timer-badge">⏱️ {pollTimers[poll.id] || 'Loading...'}</span>{/if}</small>
               </div>
             </div>
           </div>
@@ -782,5 +779,7 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
     font-family: 'Courier New', monospace;
     font-size: 0.8rem;
     white-space: nowrap;
+    margin-left: 0.5rem;
+    display: inline-block;
   }
 </style>
