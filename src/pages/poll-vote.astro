@@ -5,10 +5,13 @@ import PollVoting from '../components/PollVoting.svelte';
 
 <Layout title="Vote on Poll - PSD">
   <script is:inline>
+    console.log('[poll-vote] window.location.search:', window.location.search);
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token') || '';
+    console.log('[poll-vote] Extracted token:', token);
     if (token) {
       window.__POLL_TOKEN__ = token;
+      console.log('[poll-vote] Set window.__POLL_TOKEN__ to:', token);
     }
   </script>
   <div data-poll-token="" style="display: none;">poll-token-marker</div>

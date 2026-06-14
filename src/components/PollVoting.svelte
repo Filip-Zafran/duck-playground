@@ -40,20 +40,26 @@
   }
 
   onMount(async () => {
+    console.log('[PollVoting] pollId prop:', pollId);
+    console.log('[PollVoting] window.__POLL_TOKEN__:', window.__POLL_TOKEN__);
+
     // Get token from server-injected window variable
     if (!pollId && window.__POLL_TOKEN__) {
       pollId = window.__POLL_TOKEN__;
+      console.log('[PollVoting] Using window.__POLL_TOKEN__:', pollId);
     }
 
     // Fallback: extract from data attribute
     if (!pollId) {
       const marker = document.querySelector('[data-poll-token]');
       const tokenFromAttr = marker?.getAttribute('data-poll-token');
+      console.log('[PollVoting] Token from data attribute:', tokenFromAttr);
       if (tokenFromAttr) {
         pollId = tokenFromAttr;
       }
     }
 
+    console.log('[PollVoting] Final pollId to use:', pollId);
     if (!pollId) {
       error = 'No poll ID provided';
       loading = false;
