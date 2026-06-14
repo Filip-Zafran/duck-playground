@@ -18,19 +18,30 @@ router.post('/login', (req, res) => {
   const SECRET = getSecret();
   const COOKIE_OPTS = getCookieOpts();
 
-  console.log('📝 POST /api/auth/login - password received:', !!password);
-  console.log('   password matches:', password === SITE_PASSWORD);
-  console.log('   SECRET being used:', SECRET);
+  console.log('📝 POST /api/auth/login');
+  console.log('   Password received:', !!password);
+  console.log('   Password value length:', password ? password.length : 'undefined');
+  console.log('   Expected password length:', SITE_PASSWORD ? SITE_PASSWORD.length : 'undefined');
+  console.log('   Actual password:', password);
+  console.log('   Expected password:', SITE_PASSWORD);
+  console.log('   Match result:', password === SITE_PASSWORD);
+  console.log('   SECRET being used:', SECRET.substring(0, 10) + '...');
 
   if (password === SITE_PASSWORD) {
     const token = jwt.sign({ auth: true }, SECRET, { expiresIn: '7d' });
-    console.log('✅ Token created:', token.substring(0, 20) + '...');
+    console.log('✅ Login successful! Token created:', token.substring(0, 20) + '...');
     res.cookie('duck_session', token, COOKIE_OPTS);
     console.log('🍪 Cookie set with options:', COOKIE_OPTS);
     return res.redirect('/home');
   }
 
-  console.log('❌ Password mismatch! Expected "' + SITE_PASSWORD + '", got "' + password + '"');
+  console.log('❌ Login FAILED - Password mismatch!');
+  console.log('   Expected: "' + SITE_PASSWORD + '"');
+  console.log('   Got: "' + password + '"');
+  console.log('   Bytes expected:', Buffer.from(SITE_PASSWORD).toString('hex'));
+  console.log('   Bytes got:', Buffer.from(password || '').toString('hex'));
+
+  // Redirect with error
   res.redirect('/login?error=1');
 });
 

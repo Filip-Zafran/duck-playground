@@ -28,9 +28,20 @@ import Layout from '../layouts/Layout.astro';
           <button type="submit" class="btn-login">Login</button>
         </form>
 
-        {Astro.url.searchParams.get('error') ? (
+        {Astro.url.searchParams.get('error') === '1' ? (
           <div class="error-message">
-            ❌ Invalid password. Please try again.
+            <strong>❌ Login Failed</strong>
+            <p>The password you entered is incorrect.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">
+              Check your ADMIN_PASSWORD environment variable on Render.
+            </p>
+          </div>
+        ) : null}
+
+        {Astro.url.searchParams.get('error') === 'no-password' ? (
+          <div class="error-message">
+            <strong>❌ No Password Provided</strong>
+            <p>Please enter a password before clicking Login.</p>
           </div>
         ) : null}
       </div>
@@ -148,14 +159,25 @@ import Layout from '../layouts/Layout.astro';
 
   .error-message {
     background: #ffebee;
-    border: 1px solid #f0a9a9;
+    border: 2px solid #ef5350;
     color: #8d1f1f;
-    padding: 0.95rem 1.15rem;
+    padding: 1.2rem 1.15rem;
     border-radius: 1rem;
     text-align: center;
     font-weight: 600;
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
+  }
+
+  .error-message strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .error-message p {
+    margin: 0.3rem 0;
+    line-height: 1.5;
   }
 
   @media (max-width: 480px) {
