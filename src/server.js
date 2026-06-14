@@ -28,6 +28,7 @@ import { siteAuth } from './middleware/siteAuth.js';
 
 // Import database initialization
 import { initializeDatabase } from './config/database.js';
+import pool from './config/database.js';
 
 const app = express();
 const httpServer = createServer(app);
