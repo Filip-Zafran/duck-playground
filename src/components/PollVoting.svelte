@@ -42,7 +42,15 @@
   onMount(async () => {
     // If pollId not provided as prop, try to get from URL
     if (!pollId) {
-      pollId = new URLSearchParams(window.location.search).get('token') || '';
+      const params = new URLSearchParams(window.location.search);
+      pollId = params.get('token') || '';
+
+      // Debug logging
+      console.log('🔍 DEBUG:');
+      console.log('  window.location.href:', window.location.href);
+      console.log('  window.location.search:', window.location.search);
+      console.log('  URLSearchParams:', params.toString());
+      console.log('  pollId extracted:', pollId);
     }
 
     if (!pollId) {
