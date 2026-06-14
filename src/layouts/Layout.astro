@@ -21,12 +21,24 @@ const { title, description = 'PSD Website - Dating Event Coordination' } = Astro
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <Header client:load />
+    <Header client:idle />
     <main>
       <slot />
     </main>
     <Footer />
     <script>
+      // Global auth check
+      (async () => {
+        try {
+          const response = await fetch('/api/auth/status');
+          const data = await response.json();
+          window.__authStatus = data.authenticated;
+          console.log('🌐 Global auth status set:', window.__authStatus);
+        } catch (e) {
+          console.error('🌐 Global auth check failed:', e);
+        }
+      })();
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           function scheduleNextPing() {

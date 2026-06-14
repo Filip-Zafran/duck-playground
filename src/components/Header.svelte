@@ -15,14 +15,27 @@
   ];
 
   onMount(async () => {
+    console.log('🟢 Header.onMount fired');
     try {
       const response = await fetch('/api/auth/status');
       const data = await response.json();
       isAuthenticated = data.authenticated;
+      console.log('✅ Auth status checked:', isAuthenticated);
     } catch (e) {
-      console.error('Error checking auth status:', e);
+      console.error('❌ Error checking auth status:', e);
+      // Fallback to global auth status set by Layout
+      if (window.__authStatus !== undefined) {
+        isAuthenticated = window.__authStatus;
+        console.log('📍 Using global auth status fallback:', isAuthenticated);
+      }
     }
   });
+
+  // Also check global status on init (in case onMount doesn't fire)
+  if (typeof window !== 'undefined' && window.__authStatus !== undefined) {
+    isAuthenticated = window.__authStatus;
+    console.log('🟡 Using global auth status on init:', isAuthenticated);
+  }
 
   async function handleLogin() {
     if (!password) return;
