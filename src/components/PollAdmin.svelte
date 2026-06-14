@@ -468,9 +468,13 @@ Total votes: ${results.counts.date1 + results.counts.date2 + results.counts.date
               >
                 {copiedPollId === poll.id ? '✓ Copied!' : 'Copy Vote Link'}
               </button>
-              <a href={`/poll-results?token=${poll.id}`} class="btn-secondary" style="text-decoration: none; display: inline-block;">
+              <button
+                class="btn-secondary"
+                on:click={() => viewResults(poll.id, poll.title)}
+                title="View poll results"
+              >
                 View Results
-              </a>
+              </button>
               {#if adminToken}
                 <button
                   class="btn-delete"
