@@ -11,6 +11,7 @@ import { Server as SocketServer } from 'socket.io';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import http from 'http';
 
 // Import routes
 import adminRoutes from './routes/admin/index.js';
@@ -82,9 +83,7 @@ if (token) {
   });
 });
 
-// Serve static files (Astro build output)
-app.use(express.static('public'));
-app.use(express.static('dist'));
+// Don't serve static files - proxy to Astro dev server instead
 
 // Health check
 app.get('/health', (req, res) => {
@@ -136,9 +135,36 @@ io.on('connection', (socket) => {
   });
 });
 
-// SPA catch-all - serve index.html for frontend routing
-app.get('*', (req, res) => {
-  res.sendFile('public/index.html', { root: '.' });
+// Proxy all non-API requests to Astro dev server (4321)
+app.use((req, res) => {
+  const options = {
+    hostname: 'localhost',
+    port: 4321,
+    path: req.originalUrl,
+    method: req.method,
+    headers: {
+      ...req.headers,
+      'X-Forwarded-For': req.ip,
+      'X-Forwarded-Proto': req.protocol,
+      'X-Forwarded-Host': req.hostname
+    }
+  };
+
+  const proxyReq = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    proxyRes.pipe(res);
+  });
+
+  proxyReq.on('error', (err) => {
+    console.error('Proxy to Astro failed:', err.message);
+    res.status(503).send('Astro dev server (4321) not responding');
+  });
+
+  if (['GET', 'HEAD'].includes(req.method)) {
+    proxyReq.end();
+  } else {
+    req.pipe(proxyReq);
+  }
 });
 
 // Error handling
