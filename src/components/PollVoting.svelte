@@ -44,17 +44,10 @@
     if (!pollId) {
       const params = new URLSearchParams(window.location.search);
       pollId = params.get('token') || '';
-
-      // Debug logging
-      console.log('🔍 DEBUG:');
-      console.log('  window.location.href:', window.location.href);
-      console.log('  window.location.search:', window.location.search);
-      console.log('  URLSearchParams:', params.toString());
-      console.log('  pollId extracted:', pollId);
     }
 
     if (!pollId) {
-      error = 'No poll ID provided';
+      error = `No poll ID provided. URL: ${window.location.href} | Search: ${window.location.search}`;
       loading = false;
       return;
     }
