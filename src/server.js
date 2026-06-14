@@ -8,6 +8,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import routes
 import adminRoutes from './routes/admin/index.js';
@@ -48,8 +51,6 @@ app.use(siteAuth);
 
 // Poll vote page - serve with token injection
 app.get('/poll-vote/', (req, res, next) => {
-  const fs = require('fs');
-  const path = require('path');
   const filePath = path.join(process.cwd(), 'dist', 'poll-vote', 'index.html');
 
   fs.readFile(filePath, 'utf-8', (err, data) => {
