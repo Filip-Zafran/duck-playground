@@ -63,8 +63,14 @@ app.use('/api/vote', voteRoutes);
 app.get('/poll-vote/', (req, res, next) => {
   const filePath = path.join(process.cwd(), 'dist', 'poll-vote', 'index.html');
 
+  console.log('\n[POLL-VOTE] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log(`[POLL-VOTE] Looking for: ${filePath}`);
+  console.log(`[POLL-VOTE] Exists: ${fs.existsSync(filePath)}`);
+
   fs.readFile(filePath, 'utf-8', (err, data) => {
     if (err) {
+      console.log(`[POLL-VOTE] ⚠️  File not found, falling through. Error: ${err.message}`);
+      console.log('[POLL-VOTE] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
       return next(); // Fall through to static middleware if file not found
     }
 
@@ -78,6 +84,8 @@ if (token) {
 </script>`;
 
     const modified = data.replace('</body>', injection + '</body>');
+    console.log(`[POLL-VOTE] ✓ Serving with token injection`);
+    console.log('[POLL-VOTE] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     res.set('Content-Type', 'text/html');
     res.send(modified);
   });
@@ -86,8 +94,23 @@ if (token) {
 // Serve static files by default (production), only proxy in development
 const isDev = process.env.NODE_ENV === 'development';
 if (!isDev) {
-  app.use(express.static('public'));
-  app.use(express.static('dist'));
+  // Add debug logging for static file requests
+  app.use((req, res, next) => {
+    console.log(`[STATIC] Request: ${req.method} ${req.path}`);
+    next();
+  });
+
+  app.use(express.static('public', {
+    onFile: (pathname) => {
+      console.log(`[STATIC] ✓ Served from public: ${pathname}`);
+    }
+  }));
+
+  app.use(express.static('dist', {
+    onFile: (pathname) => {
+      console.log(`[STATIC] ✓ Served from dist: ${pathname}`);
+    }
+  }));
 }
 
 // Health check
@@ -208,16 +231,34 @@ app.get('*', (req, res) => {
     ? path.join(distPath, cleanPath, 'index.html')
     : path.join(distPath, 'index.html');
 
-  console.log('REQUEST:', req.path);
-  console.log('TRY PAGE:', pagePath);
-  console.log('PAGE EXISTS:', fs.existsSync(pagePath));
+  const homePagePath = path.join(distPath, 'index.html');
+  const pageExists = fs.existsSync(pagePath);
+  const homeExists = fs.existsSync(homePagePath);
 
-  if (fs.existsSync(pagePath)) {
+  console.log('\n[SPA FALLBACK] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log(`[SPA] Original request: ${req.path}`);
+  console.log(`[SPA] Clean path: "${cleanPath}"`);
+  console.log(`[SPA] Looking for: ${pagePath}`);
+  console.log(`[SPA] File exists: ${pageExists}`);
+
+  if (pageExists) {
+    console.log(`[SPA] ✓ Found page, serving: ${pagePath}`);
+    console.log('[SPA] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     return res.sendFile(pagePath);
   }
 
-  console.log('FALLBACK TO:', path.join(distPath, 'index.html'));
-  return res.sendFile(path.join(distPath, 'index.html'));
+  console.log(`[SPA] Page not found, checking home: ${homePagePath}`);
+  console.log(`[SPA] Home exists: ${homeExists}`);
+
+  if (!homeExists) {
+    console.log('[SPA] ⚠️  HOME PAGE NOT FOUND! This is critical.');
+    console.log('[SPA] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    return res.status(404).send('Home page not found in dist/');
+  }
+
+  console.log(`[SPA] ✓ Fallback to home: ${homePagePath}`);
+  console.log('[SPA] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+  return res.sendFile(homePagePath);
 });
 
 // Error handling
