@@ -11,6 +11,12 @@ import Layout from '../layouts/Layout.astro';
       <p class="tagline">A development sandbox for the Duck Dating Apps project</p>
     </section>
 
+    <div class="logout-section">
+      <form method="POST" action="/api/auth/logout" class="logout-form">
+        <button type="submit" class="btn-logout">Logout</button>
+      </form>
+    </div>
+
     <div class="hub-grid">
       <!-- Admin Group -->
       <div class="hub-card">
@@ -108,6 +114,38 @@ import Layout from '../layouts/Layout.astro';
     max-width: 600px;
     margin: 0 auto;
     line-height: 1.6;
+  }
+
+  .logout-section {
+    text-align: right;
+    padding: 1rem 2rem;
+  }
+
+  .logout-form {
+    display: inline-block;
+  }
+
+  .btn-logout {
+    padding: 0.6rem 1.2rem;
+    background: #ff5b92;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 12px rgba(255, 91, 146, 0.2);
+  }
+
+  .btn-logout:hover {
+    background: #ff3d7f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 91, 146, 0.3);
+  }
+
+  .btn-logout:active {
+    transform: translateY(0);
   }
 
   .hub-grid {
