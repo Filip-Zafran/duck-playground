@@ -173,9 +173,15 @@ if (isDev) {
     }
   });
 } else {
-  // Production: Serve index.html for SPA routing
+  // Production: Serve the requested file from dist, fallback to index.html for SPA routing
   app.get('*', (req, res) => {
-    res.sendFile('dist/index.html', { root: '.' });
+    const filePath = path.join(process.cwd(), 'dist', req.path.slice(1), 'index.html');
+    res.sendFile(filePath, { root: '.' }, (err) => {
+      if (err) {
+        // If file not found, serve index.html for client-side routing
+        res.sendFile(path.join(process.cwd(), 'dist/index.html'), { root: '.' });
+      }
+    });
   });
 }
 
