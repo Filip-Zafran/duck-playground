@@ -1,6 +1,9 @@
 import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import node from '@astrojs/node';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default defineConfig({
   output: 'server',

@@ -12,8 +12,59 @@ const getCookieOpts = () => {
 
 export const POST: APIRoute = async (context) => {
   try {
-    const body = await context.request.json();
-    const { password } = body;
+    console.log('📝 POST /api/auth/login - Starting');
+    console.log('   Request headers:', {
+      contentType: context.request.headers.get('content-type'),
+      contentLength: context.request.headers.get('content-length'),
+    });
+
+    let body;
+    let password;
+
+    try {
+      const contentType = context.request.headers.get('content-type') || '';
+      const text = await context.request.text();
+      console.log('   Raw request text:', text);
+      console.log('   Content-Type:', contentType);
+
+      // Try to parse as JSON first
+      if (contentType.includes('application/json')) {
+        try {
+          body = JSON.parse(text);
+          password = body.password;
+        } catch (e) {
+          console.error('Failed to parse as JSON:', e);
+          // If JSON parsing fails, try form data
+          const params = new URLSearchParams(text);
+          password = params.get('password');
+          if (!password) throw new Error('No password found in request');
+        }
+      } else {
+        // Try form data
+        const params = new URLSearchParams(text);
+        password = params.get('password');
+        if (!password) {
+          // Try JSON as fallback
+          body = JSON.parse(text);
+          password = body.password;
+        }
+      }
+
+      console.log('   Parsed password:', !!password, 'length:', password?.length);
+    } catch (parseError) {
+      console.error('Parse error:', parseError);
+      return new Response(JSON.stringify({ error: 'Invalid request format', details: String(parseError) }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!password) {
+      return new Response(JSON.stringify({ error: 'Password is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
     const SITE_PASSWORD = getSitePassword();
     const SECRET = getSecret();
 
@@ -52,7 +103,7 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error) {
     console.error('Error logging in:', error);
-    return new Response(JSON.stringify({ error: 'Login failed' }), {
+    return new Response(JSON.stringify({ error: 'Login failed', details: String(error) }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

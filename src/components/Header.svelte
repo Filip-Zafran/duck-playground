@@ -28,25 +28,41 @@
   });
 
   async function handleLogin() {
-    if (!password) return;
+    console.log('🔐 handleLogin called');
+
+    if (!password) {
+      console.log('❌ No password entered');
+      return;
+    }
+
     loginLoading = true;
+    console.log('📝 Attempting login with password length:', password.length);
 
     try {
+      console.log('📤 Sending fetch request to /api/auth/login');
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password }),
+        credentials: 'include'
       });
 
-      if (response.ok) {
+      console.log('📥 Response received:', response.status, response.ok);
+      const data = await response.json();
+      console.log('📄 Response data:', data);
+
+      if (response.ok && data.success) {
+        console.log('✅ Login successful!');
         isAuthenticated = true;
         showLoginModal = false;
         password = '';
       } else {
-        alert('Invalid password');
+        console.log('❌ Login failed:', data);
+        alert(data.error || 'Invalid password');
       }
     } catch (e) {
-      alert('Login failed');
+      console.error('❌ Login error:', e);
+      alert('Login failed: ' + String(e));
     } finally {
       loginLoading = false;
     }
@@ -63,6 +79,7 @@
 </script>
 
 <header>
+  <div class="test-navbar">RED TEST NAVBAR</div>
   <div class="header-content">
     <a href="/" class="logo">
       <img src="/images/DDA-logo.png" alt="Duck Dating Apps" class="logo-img" />
@@ -72,7 +89,11 @@
         <a href={item.href}>{item.label}</a>
       {/each}
       <div class="auth-button">
-        <button on:click={() => showLoginModal = true} class="login-btn">🔐 Login</button>
+        {#if isAuthenticated}
+          <button on:click={handleLogout} class="logout-btn">🚪 Logout</button>
+        {:else}
+          <button on:click={() => showLoginModal = true} class="login-btn">🔐 Login</button>
+        {/if}
       </div>
     </nav>
     <button
@@ -103,18 +124,33 @@
   <div class="modal-overlay" on:click={() => showLoginModal = false}>
     <div class="modal" on:click|stopPropagation>
       <h2>Admin Login</h2>
-      <form on:submit|preventDefault={handleLogin}>
+      <div class="login-form">
         <input
           type="password"
           bind:value={password}
           placeholder="Enter admin password"
           disabled={loginLoading}
           autofocus
+          on:keydown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.stopPropagation();
+              handleLogin();
+            }
+          }}
         />
-        <button type="submit" disabled={loginLoading || !password}>
+        <button
+          type="button"
+          disabled={loginLoading || !password}
+          on:click={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleLogin();
+          }}
+        >
           {loginLoading ? 'Logging in...' : 'Login'}
         </button>
-      </form>
+      </div>
       <button on:click={() => showLoginModal = false} class="close-btn">✕</button>
     </div>
   </div>
@@ -122,6 +158,15 @@
 </header>
 
 <style>
+  .test-navbar {
+    background: red;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
+  }
+
   header {
     background: linear-gradient(135deg, #0066ff 0%, #6633cc 50%, #ff1493 100%);
     position: sticky;
@@ -264,7 +309,7 @@
     font-size: 1.5rem;
   }
 
-  .modal form {
+  .modal .login-form {
     display: flex;
     gap: 0.75rem;
   }
@@ -283,7 +328,7 @@
     box-shadow: 0 0 0 3px rgba(52, 12, 70, 0.1);
   }
 
-  .modal button[type="submit"] {
+  .modal .login-form button {
     padding: 0.75rem 1.5rem;
     background: #340c46;
     color: white;
