@@ -14,6 +14,6 @@ export default defineConfig({
   integrations: [svelte()],
   server: {
     host: '0.0.0.0',
-    port: 4321,
+    port: parseInt(process.env.PORT || '4321'),
   },
 });
