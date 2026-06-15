@@ -1,5 +1,5 @@
 ---
-import Header from '../components/Header.svelte';
+import HeaderWrapper from '../components/HeaderWrapper.astro';
 import Footer from '../components/Footer.svelte';
 import '../styles/brand-tokens.css';
 
@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { title, description = 'PSD Website - Dating Event Coordination' } = Astro.props;
+
 ---
 
 <!DOCTYPE html>
@@ -21,24 +22,12 @@ const { title, description = 'PSD Website - Dating Event Coordination' } = Astro
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <Header client:idle />
+    <HeaderWrapper />
     <main>
       <slot />
     </main>
     <Footer />
     <script>
-      // Global auth check
-      (async () => {
-        try {
-          const response = await fetch('/api/auth/status');
-          const data = await response.json();
-          window.__authStatus = data.authenticated;
-          console.log('🌐 Global auth status set:', window.__authStatus);
-        } catch (e) {
-          console.error('🌐 Global auth check failed:', e);
-        }
-      })();
-
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           function scheduleNextPing() {

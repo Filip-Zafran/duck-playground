@@ -3,6 +3,7 @@
 
   let isMenuOpen = $state(false);
   let isAuthenticated = $state(false);
+  let authStatusFetched = $state(false);
   let showLoginModal = $state(false);
   let password = $state('');
   let loginLoading = $state(false);
@@ -15,27 +16,16 @@
   ];
 
   onMount(async () => {
-    console.log('🟢 Header.onMount fired');
     try {
       const response = await fetch('/api/auth/status');
       const data = await response.json();
       isAuthenticated = data.authenticated;
-      console.log('✅ Auth status checked:', isAuthenticated);
     } catch (e) {
-      console.error('❌ Error checking auth status:', e);
-      // Fallback to global auth status set by Layout
-      if (window.__authStatus !== undefined) {
-        isAuthenticated = window.__authStatus;
-        console.log('📍 Using global auth status fallback:', isAuthenticated);
-      }
+      console.error('Error checking auth status:', e);
+    } finally {
+      authStatusFetched = true;
     }
   });
-
-  // Also check global status on init (in case onMount doesn't fire)
-  if (typeof window !== 'undefined' && window.__authStatus !== undefined) {
-    isAuthenticated = window.__authStatus;
-    console.log('🟡 Using global auth status on init:', isAuthenticated);
-  }
 
   async function handleLogin() {
     if (!password) return;
@@ -82,11 +72,7 @@
         <a href={item.href}>{item.label}</a>
       {/each}
       <div class="auth-button">
-        {#if isAuthenticated}
-          <button on:click={handleLogout} class="logout-btn">🚪 Logout</button>
-        {:else}
-          <button on:click={() => showLoginModal = true} class="login-btn">🔐 Login</button>
-        {/if}
+        <button on:click={() => showLoginModal = true} class="login-btn">🔐 Login</button>
       </div>
     </nav>
     <button
