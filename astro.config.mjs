@@ -1,18 +1,16 @@
 import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
+import node from '@astrojs/node';
 
 export default defineConfig({
-  output: 'static',
+  output: 'server',
   outDir: 'dist',
+  adapter: node({
+    mode: 'standalone',
+  }),
   integrations: [svelte()],
-  vite: {
-    server: {
-      proxy: {
-        '/api': {
-          target: 'http://localhost:3001',
-          changeOrigin: true
-        }
-      }
-    }
-  }
+  server: {
+    host: '0.0.0.0',
+    port: 4321,
+  },
 });
