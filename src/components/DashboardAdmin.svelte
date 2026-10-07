@@ -18,6 +18,12 @@
     agender: true,
     other: true
   };
+  let selectedRelationshipStyles = {
+    monogamous: true,
+    'open relationship': true,
+    polyamorous: true,
+    'relationship anarchist': true
+  };
 
   // Mock data - in production would come from API
   const mockApplicants = [
@@ -29,6 +35,7 @@
       age_range: '26–35',
       status: 'approved',
       interested_in: ['All'],
+      relationship_style: 'Polyamorous',
       about: 'Passionate about polyamory and community building',
       applied_at: '2026-05-15'
     },
@@ -40,6 +47,7 @@
       age_range: '22–30',
       status: 'applied',
       interested_in: ['Men', 'Non-binary people'],
+      relationship_style: 'Open relationship',
       about: 'Looking to meet new people and expand my network',
       applied_at: '2026-05-20'
     },
@@ -51,6 +59,7 @@
       age_range: '18–25',
       status: 'applied',
       interested_in: ['All'],
+      relationship_style: 'Relationship anarchist',
       about: 'New to poly dating, excited to learn',
       applied_at: '2026-05-22'
     },
@@ -62,6 +71,7 @@
       age_range: '32–40',
       status: 'approved',
       interested_in: ['Women', 'Non-binary people'],
+      relationship_style: 'Monogamous',
       about: 'Experienced in polyamory, enjoy facilitating connections',
       applied_at: '2026-05-10'
     }
@@ -81,8 +91,10 @@
 
       const matchesStatus = selectedStatuses[applicant.status];
       const matchesGender = selectedGenders[applicant.gender];
+      const relationshipStyle = (applicant.relationship_style || '').toLowerCase();
+      const matchesRelationshipStyle = !relationshipStyle || selectedRelationshipStyles[relationshipStyle];
 
-      return matchesSearch && matchesStatus && matchesGender;
+      return matchesSearch && matchesStatus && matchesGender && matchesRelationshipStyle;
     });
   }
 
@@ -97,6 +109,11 @@
 
   function toggleGender(gender) {
     selectedGenders[gender] = !selectedGenders[gender];
+    filterApplicants();
+  }
+
+  function toggleRelationshipStyle(style) {
+    selectedRelationshipStyles[style.toLowerCase()] = !selectedRelationshipStyles[style.toLowerCase()];
     filterApplicants();
   }
 
@@ -261,6 +278,22 @@
           />
           <span>Other</span>
         </label>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Relationship style</h3>
+      <div class="filter-group">
+        {#each ['Monogamous', 'Open relationship', 'Polyamorous', 'Relationship anarchist'] as style}
+          <label class="filter-checkbox">
+            <input
+              type="checkbox"
+              checked={selectedRelationshipStyles[style.toLowerCase()]}
+              on:change={() => toggleRelationshipStyle(style)}
+            />
+            <span>{style} ({applicants.filter((a) => (a.relationship_style || '').toLowerCase() === style.toLowerCase()).length})</span>
+          </label>
+        {/each}
       </div>
     </div>
   </div>
