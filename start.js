@@ -7,10 +7,10 @@ process.env.HOST = host;
 
 // Import and start the server
 try {
-  await import('./dist/server.mjs');
+  await import('./dist/server/entry.mjs');
 } catch (error) {
-  if (error.code === 'ERR_MODULE_NOT_FOUND' && error.url.includes('server.mjs')) {
-    console.error('Failed to find dist/server.mjs. Make sure you have run "pnpm build"');
+  if (error.code === 'ERR_MODULE_NOT_FOUND' && error.url.includes('/dist/server/entry.mjs')) {
+    console.error('Failed to find dist/server/entry.mjs. Make sure you have run "npm run build"');
   }
   console.error('Server startup error:', error);
   process.exit(1);
