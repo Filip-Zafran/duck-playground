@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import EventImportManager from '../components/EventImportManager.svelte';
 ---
 
 <Layout title="Organiser - PSD">
@@ -8,10 +9,7 @@ import Layout from '../layouts/Layout.astro';
       <h1>Organiser</h1>
     </div>
 
-    <div class="placeholder">
-      <div class="placeholder-icon">👥</div>
-      <div class="placeholder-text">Organiser tools and settings will appear here</div>
-    </div>
+    <EventImportManager client:load />
   </div>
 
   <nav class="bottom-nav">
@@ -54,25 +52,6 @@ import Layout from '../layouts/Layout.astro';
     font-size: 1.8rem;
     color: #340c46;
     margin: 0;
-  }
-
-  .placeholder {
-    background: white;
-    border-radius: 12px;
-    padding: 3rem 2rem;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-
-  .placeholder-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-
-  .placeholder-text {
-    color: #999;
-    font-size: 1.1rem;
-    line-height: 1.6;
   }
 
   .bottom-nav {
