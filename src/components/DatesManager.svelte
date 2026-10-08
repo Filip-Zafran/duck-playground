@@ -124,8 +124,8 @@
 <div class="container">
   <div class="header">
     <div>
-      <h1>Event Management</h1>
-      <p>Manage event dates, deadlines, and details</p>
+      <h1>Event Schedule &amp; Details</h1>
+      <p>Create and manage event dates, locations, deadlines, and registration capacity</p>
     </div>
     <button class="btn-primary" on:click={() => openForm()}>+ Add Event</button>
   </div>
