@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   type Participant = { email: string; name: string; romanticLikesGiven: number; socialLikesGiven: number; romanticLikesReceived: number; socialLikesReceived: number; romanticMatches: number; socialMatches: number; totalMatches: number; romanticMatchNames: string[]; socialMatchNames: string[] };
-  type SavedEvent = { eventId: string; eventDate: string; participantCount: number; importedAt: string; reportData: { participants: Participant[] } };
+  type SavedEvent = { eventId: string; eventName: string; eventDate: string; participantCount: number; importedAt: string; reportData: { participants: Participant[] } };
   let file: File | null = null;
   let events: SavedEvent[] = [];
   let loading = true;
@@ -63,14 +63,14 @@
   <div class="intro">
     <p class="eyebrow">Event data</p>
     <h2 id="import-title">Import a participant report</h2>
-    <p>Upload the DDA event CSV to save participant totals and match names. Uploading the same event ID updates its saved data.</p>
+    <p>Upload the DDA event CSV to save participant totals and match names. Put Event Name first, with the ID in parentheses, for example: Riverside Golden Hour (riverside-golden-hour-2026-07-30). Uploading the same ID updates its saved data.</p>
   </div>
 
   <form class="upload-card" on:submit|preventDefault={upload}>
     <label for="event-csv">CSV report</label>
     <input id="event-csv" type="file" accept=".csv,text/csv" on:change={(event) => { file = event.currentTarget.files?.[0] ?? null; message = ''; error = ''; }} />
     <div class="upload-actions">
-      <span class="file-name">{file ? file.name : 'Expected DDA CRM import CSV'}</span>
+      <span class="file-name">{file ? file.name : 'DDA CRM import CSV · Event Name first column'}</span>
       <button type="submit" disabled={!file || uploading}>{uploading ? 'Saving…' : 'Upload and save'}</button>
     </div>
     {#if message}<p class="status success" role="status">{message}</p>{/if}
@@ -90,15 +90,16 @@
   {:else}
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Event ID</th><th>Date</th><th>Participants</th><th>Last saved</th></tr></thead>
+        <thead><tr><th>Event Name</th><th>Event ID</th><th>Date</th><th>Participants</th><th>Last saved</th></tr></thead>
         <tbody>
           {#each events as event (event.eventId)}
             <tr class="event-row" on:click={() => expandedEvent = expandedEvent === event.eventId ? '' : event.eventId}>
-              <td><button class="event-link" type="button" aria-expanded={expandedEvent === event.eventId} on:click|stopPropagation={() => expandedEvent = expandedEvent === event.eventId ? '' : event.eventId}>{event.eventId}</button></td>
+              <td><button class="event-link" type="button" aria-expanded={expandedEvent === event.eventId} on:click|stopPropagation={() => expandedEvent = expandedEvent === event.eventId ? '' : event.eventId}>{event.eventName || event.eventId}</button></td>
+              <td>{event.eventId}</td>
               <td>{dateLabel(event.eventDate)}</td><td>{event.participantCount}</td><td>{new Date(event.importedAt).toLocaleString()}</td>
             </tr>
             {#if expandedEvent === event.eventId}
-              <tr><td colspan="4" class="details-cell">
+              <tr><td colspan="5" class="details-cell">
                 <div class="details-wrap">
                   <table class="participants">
                     <thead><tr><th>Participant</th><th>Email</th><th>Likes given (R/S)</th><th>Likes received (R/S)</th><th>Matches (R/S)</th><th>Match names (R/S)</th></tr></thead>
