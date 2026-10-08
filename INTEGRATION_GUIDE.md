@@ -118,10 +118,18 @@ DUCK_PLAYGROUND_API=https://duck-playground.onrender.com
 ```
 NODE_ENV=production
 PORT=3001
-DATABASE_URL=postgresql://...
+# Use the current Internal Database URL shown by the Render Postgres service
+# named duck-database. Set this on the web service as DATABASE_URL.
+DATABASE_URL=<duck-database internal database URL>
 JWT_SECRET=your-secret
 CORS_ORIGIN=https://psd-website.com
 ```
+
+The Render service name (`duck-database`) is a dashboard label. The application
+connects through `DATABASE_URL`; copy the URL from the database's **Connect**
+menu instead of constructing one from the service name. After renaming the
+database service, check the web service's `DATABASE_URL` in Render and update it
+to the current internal URL if needed, then deploy the web service.
 
 ## Common Issues
 
